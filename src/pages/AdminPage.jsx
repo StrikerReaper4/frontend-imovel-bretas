@@ -91,41 +91,41 @@ function AdminPage() {
   };
 
   const editPropertyFunction = () => {
-    console.log(propertyId);
-    const { img, descricao, ...temporaryProperty } = selectedProperty;
-    temporaryProperty.area = sanitizeNumber(temporaryProperty.area);
-    temporaryProperty.quartos = sanitizeNumber(temporaryProperty.quartos);
-    temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
-    temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
-    temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
-    console.log(temporaryProperty);
-    const propertyToSend = {
-      ...temporaryProperty,
-      id: selectedProperty.id,
+    const editPropertyFunction = () => {
+      if (!selectedProperty) {
+        console.error("Nenhum imóvel selecionado para edição.");
+        return;
+      }
+      const propertyId = selectedProperty.id;
+      console.log("Editando imóvel de ID:", propertyId);
+
+      const { img, descricao, id, ...temporaryProperty } = selectedProperty;
+      temporaryProperty.area = sanitizeNumber(temporaryProperty.area);
+      temporaryProperty.quartos = sanitizeNumber(temporaryProperty.quartos);
+      temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
+      temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
+      temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
+
+      const propertyToSend = { ...temporaryProperty, id: propertyId };
+
+      try {
+        const handleEdit = async () => {
+          const response = await updateImovel(propertyToSend);
+          console.log("resposta", response);
+          setProperties((prev) =>
+            prev.map((p) => (p.id === propertyId ? propertyToSend : p))
+          );
+
+          setSelectedProperty(null);
+          alert(`Imóvel de ID ${propertyId} foi editado.`);
+          closeModal();
+          window.location.reload();
+        };
+        handleEdit();
+      } catch (err) {
+        console.error("Erro ao editar imóvel:", err);
+      }
     };
-    delete propertyToSend.id;
-    try {
-      const handleEdit = async () => {
-        const response = await updateImovel(propertyToSend);
-        console.log("resposta", response);
-        properties.splice(
-          properties.indexOf(
-            properties.find((property) => property.id === propertyId)
-          ),
-          1,
-          propertyToSend
-        );
-        setProperties([...properties]);
-        setSelectedProperty(null);
-        alert(`Imóvel de ID ${propertyId} foi editado.`);
-        console.log(selectedProperty);
-        closeModal();
-        window.location.reload();
-      };
-      handleEdit();
-    } catch (err) {
-      console.error(err);
-    }
   };
   const addPropertyFunction = (property) => {
     console.log(property);
@@ -425,11 +425,7 @@ function EditProperty({ functions, property }) {
       />
 
       <div className="flex items-center justify-center mt-4">
-        <Button
-          label="Salvar"
-          wid="full"
-          onClick={() => functions.edit(property)}
-        />
+        <Button label="Salvar" wid="full" onClick={() => functions.edit()} />
       </div>
     </div>
   );
