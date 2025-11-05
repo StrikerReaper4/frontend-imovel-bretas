@@ -10,7 +10,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const redirectToWhatsapp = () => {
     const phoneNumber = "556784121913";
     const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
-    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ID ${property?.ind}`;
+    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ID ${property?.id}`;
     window.open(
       `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
       "_blank",
@@ -33,14 +33,16 @@ export default function CardProperty({ property, admin, handleOpen }) {
       />
       {admin && (
         <span className="text-[#9c894a] font-extrabold text-sm -mt-3 block">
-          ID: {property?.ind}
+          ID: {property?.id}
         </span>
       )}
       <span className="text-[#c5ac5c] font-bold text-sm block">
         {property?.tipo}
       </span>
       <FaMapMarkerAlt size={25} className="inline-block" />
-      <h2 className="inline-block font-bold text-2xl align-middle text-wrap w-[80%]">{address}</h2>
+      <h2 className="inline-block font-bold text-2xl align-middle text-wrap w-[80%]">
+        {address}
+      </h2>
 
       <div className="flex justify-between mt-2 max-w-[350px]">
         <div>
@@ -76,19 +78,19 @@ export default function CardProperty({ property, admin, handleOpen }) {
             label="Ver Detalhes"
             wid="full"
             className="p-0 mt-2"
-            onClick={() => navigate(`/property/${property?.ind}`)}
+            onClick={() => navigate(`/property/${property?.id}`)}
           />
           <Button
             label="Editar Imóvel"
             wid="full"
             className="p-0 mt-2 bg-[#c5ac5c] hover:bg-[#978b62]"
-            onClick={() => handleOpen("edit", property?.ind)}
+            onClick={() => handleOpen("edit", property?.id)}
           />
           <Button
             label="Deletar Imóvel"
             wid="full"
             className="p-0 mt-2 bg-red-600 hover:bg-red-700"
-            onClick={() => handleOpen("delete", property?.ind)}
+            onClick={() => handleOpen("delete", property?.id)}
           />
         </div>
       ) : (
@@ -97,7 +99,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
             label="Ver Detalhes"
             wid="full"
             className="p-0 mt-2"
-            onClick={() => navigate(`/property/${property?.ind}`)}
+            onClick={() => navigate(`/property/${property?.id}`)}
           />
           <Button
             label="Entrar em Contato"

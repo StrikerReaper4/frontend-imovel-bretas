@@ -38,7 +38,9 @@ function PropertySelected() {
   // Atualizar imóvel selecionado quando properties estiver preenchido
   useEffect(() => {
     if (properties.length > 0) {
-      const found = properties.find((prop) => prop.ind === parseInt(propertyId));
+      const found = properties.find(
+        (prop) => prop.ind === parseInt(propertyId)
+      );
       setProperty(found || null);
     }
   }, [properties, propertyId]);
@@ -145,7 +147,7 @@ function PropertySelected() {
             </p>
             <p className="text-base sm:text-lg mt-2">
               <strong>Descrição:</strong>{" "}
-              {property.description ||
+              {property.descricao ||
                 "Este imóvel não possui uma descrição detalhada no momento."}
             </p>
             <Button

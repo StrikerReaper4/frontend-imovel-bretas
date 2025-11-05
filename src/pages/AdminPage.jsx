@@ -59,7 +59,12 @@ function AdminPage() {
           console.log("resposta", response);
           window.location.reload();
         }
-        setProperties(data);
+        const normalized = data.map((p) => ({
+          ...p,
+          id: Number(p.id),
+        }));
+        console.log("Propriedades normalizadas:", normalized);
+        setProperties(normalized);
       } catch (err) {
         console.error("Erro ao pegar imóveis:", err);
       }
@@ -152,21 +157,29 @@ function AdminPage() {
 
   const openModal = useCallback(
     (type, id) => {
-      const selectProperty = properties.find((property) => property.id === id);
-      setSelectedProperty(selectProperty);
-      setPropertyId(id);
-      setModalType(type);
+      console.log("Modal aberto:", type, "ID:", id);
+      console.log("Lista de propriedades:", properties);
 
-      setTimeout(() => {
-        console.log(
-          "Modal aberto:",
-          type,
-          "ID:",
-          id,
-          "Property:",
-          selectProperty
-        );
-      }, 0);
+      const numericId = Number(id);
+      const selectProperty = properties.find(
+        (property) => Number(property.id) === Number(numericId)
+      );
+
+      console.log("Buscando propriedade com ID:", numericId);
+      console.log(
+        "Propriedades disponíveis:",
+        properties.map((p) => p.id)
+      );
+
+      if (!selectProperty) {
+        console.error("Nenhum imóvel encontrado com ID:", numericId);
+      } else {
+        console.log("Propriedade encontrada:", selectProperty);
+      }
+
+      setSelectedProperty(selectProperty);
+      setModalType(type);
+      setPropertyId(numericId);
     },
     [properties]
   );
@@ -252,8 +265,10 @@ function AdminPage() {
 }
 
 function EditProperty({ functions, property }) {
-  console.log("Property recebida no modal:", property);
-  if (!property) return <p>Carregando dados do imóvel...</p>;
+  if (!property) {
+    console.warn("EditProperty renderizado sem propriedade.");
+    return <p>Carregando dados do imóvel...</p>;
+  }
   return (
     <div>
       <div className="flex items-left space-y-4 space-x-4 -mb-2 flex-cols-2 md:flex-cols-1">
