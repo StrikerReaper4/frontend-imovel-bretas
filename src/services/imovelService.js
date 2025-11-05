@@ -84,6 +84,7 @@ export const updateImovel = async (imovel) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
     } else {
+      console.log("VINDO DO SERVICE", imovel);
       response = await api.post("/atualizar/imovel", imovel);
     }
 
