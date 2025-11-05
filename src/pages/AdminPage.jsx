@@ -109,6 +109,8 @@ function AdminPage() {
     temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
     temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
     temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
+    temporaryProperty.numero = sanitizeNumber(temporaryProperty.numero);
+    temporaryProperty.cep = String(temporaryProperty.cep).replace(/[^\d]/g, ""); // remove hífens e letras
 
     const propertyToSend = { ...temporaryProperty, ind: propertyId };
 

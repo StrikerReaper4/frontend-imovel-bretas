@@ -77,10 +77,16 @@ export const deleteImovel = async (id) => {
 
 export const updateImovel = async (imovel) => {
   try {
-    const formData = toFormData(imovel);
-    const response = await api.post("/atualizar/imovel", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    let response;
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      const formData = toFormData(imovel);
+      response = await api.post("/atualizar/imovel", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } else {
+      response = await api.post("/atualizar/imovel", imovel);
+    }
+
     return response.data;
   } catch (error) {
     console.error("Erro ao atualizar imóvel:", error);
