@@ -156,11 +156,11 @@ function AdminPage() {
   };
 
   const openModal = useCallback(
-    (type, ind) => {
-      console.log("Modal aberto:", type, "ind:", ind);
+    (type, id) => {
+      console.log("Modal aberto:", type, "ind:", id);
       console.log("Lista de propriedades:", properties);
 
-      const numericId = Number(ind);
+      const numericId = Number(id);
       const selectProperty = properties.find(
         (property) => Number(property.ind) === Number(numericId)
       );
