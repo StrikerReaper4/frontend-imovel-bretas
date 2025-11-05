@@ -10,7 +10,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const redirectToWhatsapp = () => {
     const phoneNumber = "556784121913";
     const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
-    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ID ${property?.id}`;
+    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ind ${property?.ind}`;
     window.open(
       `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
       "_blank",
@@ -33,7 +33,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
       />
       {admin && (
         <span className="text-[#9c894a] font-extrabold text-sm -mt-3 block">
-          ID: {property?.id}
+          ind: {property?.ind}
         </span>
       )}
       <span className="text-[#c5ac5c] font-bold text-sm block">
@@ -78,19 +78,19 @@ export default function CardProperty({ property, admin, handleOpen }) {
             label="Ver Detalhes"
             wid="full"
             className="p-0 mt-2"
-            onClick={() => navigate(`/property/${property?.id}`)}
+            onClick={() => navigate(`/property/${property?.ind}`)}
           />
           <Button
             label="Editar Imóvel"
             wid="full"
             className="p-0 mt-2 bg-[#c5ac5c] hover:bg-[#978b62]"
-            onClick={() => handleOpen("edit", property?.id)}
+            onClick={() => handleOpen("edit", property?.ind)}
           />
           <Button
             label="Deletar Imóvel"
             wid="full"
             className="p-0 mt-2 bg-red-600 hover:bg-red-700"
-            onClick={() => handleOpen("delete", property?.id)}
+            onClick={() => handleOpen("delete", property?.ind)}
           />
         </div>
       ) : (
@@ -99,7 +99,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
             label="Ver Detalhes"
             wid="full"
             className="p-0 mt-2"
-            onClick={() => navigate(`/property/${property?.id}`)}
+            onClick={() => navigate(`/property/${property?.ind}`)}
           />
           <Button
             label="Entrar em Contato"

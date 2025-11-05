@@ -156,19 +156,18 @@ function AdminPage() {
   };
 
   const openModal = useCallback(
-    (type, id) => {
+    (type, id = null) => {
       console.log("Modal aberto:", type, "ind:", id);
       console.log("Lista de propriedades:", properties);
 
+      if (!id && type !== "add") {
+        console.error("ID inválido recebido:", id);
+        return;
+      }
+
       const numericId = Number(id);
       const selectProperty = properties.find(
-        (property) => Number(property.ind) === Number(numericId)
-      );
-
-      console.log("Buscando propriedade com ind:", numericId);
-      console.log(
-        "Propriedades disponíveis:",
-        properties.map((p) => p.ind)
+        (property) => Number(property.ind) === numericId
       );
 
       if (!selectProperty) {
