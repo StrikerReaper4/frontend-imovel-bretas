@@ -36,7 +36,7 @@ function AdminPage() {
         if (data.length === 0) {
           //criar imovel placeholder
           const newImovel = {
-            id: 0,
+            ind: 0,
             tipo: "Casa",
             rua: "Rua dos Imóveis",
             numero: "123",
@@ -61,7 +61,7 @@ function AdminPage() {
         }
         const normalized = data.map((p) => ({
           ...p,
-          id: Number(p.id),
+          ind: Number(p.ind),
         }));
         console.log("Propriedades normalizadas:", normalized);
         setProperties(normalized);
@@ -79,13 +79,13 @@ function AdminPage() {
         console.log("resposta", response);
         properties.splice(
           properties.indexOf(
-            properties.find((property) => property.id === propertyId)
+            properties.find((property) => property.ind === propertyId)
           ),
           1
         );
         setProperties([...properties]);
         setSelectedProperty(null);
-        alert(`Imóvel de ID ${propertyId} foi deletado.`);
+        alert(`Imóvel de ind ${propertyId} foi deletado.`);
         closeModal();
         window.location.reload();
       };
@@ -100,28 +100,28 @@ function AdminPage() {
       return;
     }
 
-    const propertyId = selectedProperty.id;
-    console.log("Editando imóvel de ID:", propertyId, selectedProperty);
+    const propertyId = selectedProperty.ind;
+    console.log("Editando imóvel de ind:", propertyId, selectedProperty);
 
-    const { img, descricao, id, ...temporaryProperty } = selectedProperty;
+    const { img, descricao, ind, ...temporaryProperty } = selectedProperty;
     temporaryProperty.area = sanitizeNumber(temporaryProperty.area);
     temporaryProperty.quartos = sanitizeNumber(temporaryProperty.quartos);
     temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
     temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
     temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
 
-    const propertyToSend = { ...temporaryProperty, id: propertyId };
+    const propertyToSend = { ...temporaryProperty, ind: propertyId };
 
     try {
       const handleEdit = async () => {
         const response = await updateImovel(propertyToSend);
         console.log("resposta", response);
         setProperties((prev) =>
-          prev.map((p) => (p.id === propertyId ? propertyToSend : p))
+          prev.map((p) => (p.ind === propertyId ? propertyToSend : p))
         );
 
         setSelectedProperty(null);
-        alert(`Imóvel de ID ${propertyId} foi editado.`);
+        alert(`Imóvel de ind ${propertyId} foi editado.`);
         closeModal();
       };
       handleEdit();
@@ -156,23 +156,23 @@ function AdminPage() {
   };
 
   const openModal = useCallback(
-    (type, id) => {
-      console.log("Modal aberto:", type, "ID:", id);
+    (type, ind) => {
+      console.log("Modal aberto:", type, "ind:", ind);
       console.log("Lista de propriedades:", properties);
 
-      const numericId = Number(id);
+      const numericId = Number(ind);
       const selectProperty = properties.find(
-        (property) => Number(property.id) === Number(numericId)
+        (property) => Number(property.ind) === Number(numericId)
       );
 
-      console.log("Buscando propriedade com ID:", numericId);
+      console.log("Buscando propriedade com ind:", numericId);
       console.log(
         "Propriedades disponíveis:",
-        properties.map((p) => p.id)
+        properties.map((p) => p.ind)
       );
 
       if (!selectProperty) {
-        console.error("Nenhum imóvel encontrado com ID:", numericId);
+        console.error("Nenhum imóvel encontrado com ind:", numericId);
       } else {
         console.log("Propriedade encontrada:", selectProperty);
       }
@@ -458,7 +458,7 @@ function DeleteProperty({ functions, propertyId }) {
   return (
     <div>
       <p className="text-left antialiased text-[#0f3e58] text-md mt-2">
-        Esta ação é irreversível. Ao confirmar, todos os dados do imóvel de ID{" "}
+        Esta ação é irreversível. Ao confirmar, todos os dados do imóvel de ind{" "}
         {propertyId} serão perdidos.
       </p>
       <div className="flex items-center justify-center mt-4 gap-4">
