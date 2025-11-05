@@ -116,7 +116,7 @@ function AdminPage() {
       ...temporaryProperty,
       id_imovel: propertyId, // <-- Envie o ID correto!
     };
-
+    console.log(propertyToSend);
     try {
       const handleEdit = async () => {
         const response = await updateImovel(propertyToSend);
