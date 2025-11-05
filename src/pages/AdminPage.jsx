@@ -112,7 +112,10 @@ function AdminPage() {
     temporaryProperty.numero = sanitizeNumber(temporaryProperty.numero);
     temporaryProperty.cep = String(temporaryProperty.cep).replace(/[^\d]/g, ""); // remove hífens e letras
 
-    const propertyToSend = { ...temporaryProperty, ind: propertyId };
+    const propertyToSend = {
+      ...temporaryProperty,
+      id_imovel: selectedProperty.id, // <-- Envie o ID correto!
+    };
 
     try {
       const handleEdit = async () => {
