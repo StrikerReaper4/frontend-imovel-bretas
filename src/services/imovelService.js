@@ -65,11 +65,8 @@ export const createImovel = async (imovel) => {
 
 export const deleteImovel = async (id) => {
   try {
-    const formData = new FormData();
-    formData.append("id_imovel", Math.abs(Number(id))); // 🔥 converte para número
-
-    const response = await api.post("/deletar/imovel", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    const response = await api.post("/deletar/imovel", {
+      id_imovel: Number(id),
     });
     return response.data;
   } catch (error) {
