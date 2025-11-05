@@ -114,7 +114,7 @@ function AdminPage() {
 
     const propertyToSend = {
       ...temporaryProperty,
-      id_imovel: selectedProperty.id, // <-- Envie o ID correto!
+      id_imovel: propertyId, // <-- Envie o ID correto!
     };
 
     try {
