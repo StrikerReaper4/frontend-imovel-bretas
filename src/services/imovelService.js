@@ -26,7 +26,7 @@ const toFormData = (obj) => {
 
 export const getImoveis = async () => {
   try {
-    const response = await api.post("/filtrar/imoveis", new FormData());
+    const response = await api.post("/filtrar/imoveis", {}); // ✅ JSON vazio
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
@@ -39,10 +39,7 @@ export const getImoveis = async () => {
 
 export const filterImoveis = async (filtro) => {
   try {
-    const formData = toFormData(filtro);
-    const response = await api.post("/filtrar/imoveis", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await api.post("/filtrar/imoveis", filtro); // ✅ JSON normal
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
