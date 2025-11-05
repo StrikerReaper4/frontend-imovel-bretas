@@ -44,7 +44,7 @@ function AdminPage() {
             cidade: "Cidade dos Imóveis",
             estado: "Estado dos Imóveis",
             cep: "00000-000",
-            pais: "Pais dos Imóveis",
+            pais: "Brasil",
             area: 100,
             quartos: 2,
             banheiros: 2,
@@ -82,6 +82,7 @@ function AdminPage() {
         setSelectedProperty(null);
         alert(`Imóvel de ID ${propertyId} foi deletado.`);
         closeModal();
+        window.location.reload();
       };
       handleDelete();
     } catch (err) {
@@ -143,6 +144,7 @@ function AdminPage() {
         setSelectedProperty(null);
         alert("Novo imóvel adicionado.");
         closeModal();
+        window.location.reload();
       };
       handleCreate();
     } catch (err) {
@@ -241,6 +243,8 @@ function AdminPage() {
 }
 
 function EditProperty({ functions, property }) {
+  if (!property) return <p>Carregando dados do imóvel...</p>;
+
   console.log(property);
   return (
     <div>

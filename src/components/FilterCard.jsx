@@ -1,12 +1,11 @@
 import Input from "./Input";
 import Button from "./Button";
-import { filterImoveis } from "../services/imovelService"
+import { filterImoveis } from "../services/imovelService";
 import { useState } from "react";
 
-
-function FilterCard({ admin,onFilter }) {
+function FilterCard({ admin, onFilter }) {
   const [filter, setFilter] = useState({
-    ind: "",
+    id: "",
     tipo: "",
     bairro: "",
     cidade: "",
@@ -22,21 +21,21 @@ function FilterCard({ admin,onFilter }) {
   if (admin === undefined) {
     admin = false;
   }
-  
+
   const handleApplyFilters = (e) => {
     e.preventDefault();
     console.log(filter);
-    if (filter.tipo === "Qualquer"){
-      setFilter({...filter, tipo: ""})
+    if (filter.tipo === "Qualquer") {
+      setFilter({ ...filter, tipo: "" });
     }
-    if (filter.pais === "Qualquer"){
-      setFilter({...filter, pais: ""})
+    if (filter.pais === "Qualquer") {
+      setFilter({ ...filter, pais: "" });
     }
-    if (filter.estado === "Qualquer"){
-      setFilter({...filter, estado: ""})
+    if (filter.estado === "Qualquer") {
+      setFilter({ ...filter, estado: "" });
     }
-    if (filter.cidade === "Qualquer"){
-      setFilter({...filter, cidade: ""})
+    if (filter.cidade === "Qualquer") {
+      setFilter({ ...filter, cidade: "" });
     }
     /*Converter para Number */
     const numericFilter = {
@@ -55,9 +54,9 @@ function FilterCard({ admin,onFilter }) {
         alert("Nenhum imovel encontrado");
         window.location.reload();
       }
-    }
+    };
     fetchFilters();
-  }
+  };
   return (
     <>
       <div className="bg-white w-full rounded-lg p-4 shadow-md text-center">
@@ -70,8 +69,8 @@ function FilterCard({ admin,onFilter }) {
               label="Pesquisa por ID"
               wid="full"
               placeholder="Ex: 7344"
-              value={filter.ind}
-              setValue={(newValue) => setFilter({ ...filter, ind: newValue })}
+              value={filter.id}
+              setValue={(newValue) => setFilter({ ...filter, id: newValue })}
             />
           </div>
           <hr className={`${admin ? "" : "hidden"} my-2 text-gray-300`} />
@@ -83,7 +82,7 @@ function FilterCard({ admin,onFilter }) {
               label="Tipo de Imóvel"
               wid="150"
               select="true"
-              selectOptions={["Qualquer","Casa", "Apartamento", "Terreno"]}
+              selectOptions={["Qualquer", "Casa", "Apartamento", "Terreno"]}
               value={filter.tipo}
               setValue={(newValue) => setFilter({ ...filter, tipo: newValue })}
             />
@@ -100,7 +99,12 @@ function FilterCard({ admin,onFilter }) {
               label="País"
               wid="full md:150"
               select="true"
-              selectOptions={["Qualquer","Brasil", "Estados Unidos", "Portugal"]}
+              selectOptions={[
+                "Qualquer",
+                "Brasil",
+                "Estados Unidos",
+                "Portugal",
+              ]}
               value={filter.pais}
               setValue={(newValue) => setFilter({ ...filter, pais: newValue })}
             />
@@ -109,25 +113,37 @@ function FilterCard({ admin,onFilter }) {
               label="Estado"
               wid="full md:150"
               select="true"
-              selectOptions={["Qualquer","SP", "RJ", "MG","PR"]}
+              selectOptions={["Qualquer", "SP", "RJ", "MG", "PR"]}
               value={filter.estado}
-              setValue={(newValue) => setFilter({ ...filter, estado: newValue })}
+              setValue={(newValue) =>
+                setFilter({ ...filter, estado: newValue })
+              }
             />
             <Input
               type="text"
               label="Cidade"
               wid="full md:150"
               select="true"
-              selectOptions={["Qualquer","São Paulo", "Rio de Janeiro", "Belo Horizonte","Curitiba"]}
+              selectOptions={[
+                "Qualquer",
+                "São Paulo",
+                "Rio de Janeiro",
+                "Belo Horizonte",
+                "Curitiba",
+              ]}
               value={filter.cidade}
-              setValue={(newValue) => setFilter({ ...filter, cidade: newValue })}
+              setValue={(newValue) =>
+                setFilter({ ...filter, cidade: newValue })
+              }
             />
             <Input
               type="text"
               label="Bairro"
               wid="170"
               value={filter.bairro}
-              setValue={(newValue) => setFilter({ ...filter, bairro: newValue })}
+              setValue={(newValue) =>
+                setFilter({ ...filter, bairro: newValue })
+              }
             />
           </div>
 
@@ -172,7 +188,9 @@ function FilterCard({ admin,onFilter }) {
               select="true"
               selectOptions={[0, 1, 2, 3, 4, 5]}
               value={filter.quartos}
-              setValue={(newValue) => setFilter({ ...filter, quartos: newValue })}
+              setValue={(newValue) =>
+                setFilter({ ...filter, quartos: newValue })
+              }
             />
             <Input
               type="number"
@@ -181,7 +199,9 @@ function FilterCard({ admin,onFilter }) {
               select="true"
               selectOptions={[0, 1, 2, 3, 4, 5]}
               value={filter.banheiros}
-              setValue={(newValue) => setFilter({ ...filter, banheiros: newValue })}
+              setValue={(newValue) =>
+                setFilter({ ...filter, banheiros: newValue })
+              }
             />
             <Input
               type="number"
