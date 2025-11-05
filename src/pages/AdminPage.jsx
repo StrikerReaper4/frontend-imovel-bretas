@@ -357,9 +357,11 @@ function EditProperty({ functions, property }) {
         wid="full"
         multiple
         className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md file:hover:bg-[#0d3246] cursor-pointer"
-        value={property.imagens}
-        setValue={(newValue) => functions.change({ ...property, imagens: newValue })}
+        setValue={(files) =>
+          functions.change({ ...property, imagens: Array.from(files.target.files) })
+        }
       />
+
 
       <div className="flex items-center justify-center mt-4">
         <Button label="Salvar" wid="full" onClick={() => functions.edit(property)} />
@@ -560,12 +562,12 @@ function AddProperty({ functions }) {
         label="Imagens"
         wid="full"
         multiple
-        className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md file:hover:bg-[#0d3246] cursor-pointer file:cursor-pointer"
-        value={property.imagens}
-        setValue={(newValue) =>
-          setProperty({ ...property, imagens: newValue })
+        className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md file:hover:bg-[#0d3246] cursor-pointer"
+        setValue={(files) =>
+          setProperty({ ...property, imagens: Array.from(files.target.files) })
         }
       />
+
 
       <div className="flex items-center justify-center mt-4">
         <Button label="Salvar" wid="full" onClick={() => functions.add(property)} />
