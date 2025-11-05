@@ -89,44 +89,42 @@ function AdminPage() {
       console.error(err);
     }
   };
-
   const editPropertyFunction = () => {
-    const editPropertyFunction = () => {
-      if (!selectedProperty) {
-        console.error("Nenhum imóvel selecionado para edição.");
-        return;
-      }
-      const propertyId = selectedProperty.id;
-      console.log("Editando imóvel de ID:", propertyId);
+    if (!selectedProperty) {
+      console.error("Nenhum imóvel selecionado para edição.");
+      return;
+    }
 
-      const { img, descricao, id, ...temporaryProperty } = selectedProperty;
-      temporaryProperty.area = sanitizeNumber(temporaryProperty.area);
-      temporaryProperty.quartos = sanitizeNumber(temporaryProperty.quartos);
-      temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
-      temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
-      temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
+    const propertyId = selectedProperty.id;
+    console.log("Editando imóvel de ID:", propertyId, selectedProperty);
 
-      const propertyToSend = { ...temporaryProperty, id: propertyId };
+    const { img, descricao, id, ...temporaryProperty } = selectedProperty;
+    temporaryProperty.area = sanitizeNumber(temporaryProperty.area);
+    temporaryProperty.quartos = sanitizeNumber(temporaryProperty.quartos);
+    temporaryProperty.banheiros = sanitizeNumber(temporaryProperty.banheiros);
+    temporaryProperty.vagas = sanitizeNumber(temporaryProperty.vagas);
+    temporaryProperty.valor = sanitizeNumber(temporaryProperty.valor);
 
-      try {
-        const handleEdit = async () => {
-          const response = await updateImovel(propertyToSend);
-          console.log("resposta", response);
-          setProperties((prev) =>
-            prev.map((p) => (p.id === propertyId ? propertyToSend : p))
-          );
+    const propertyToSend = { ...temporaryProperty, id: propertyId };
 
-          setSelectedProperty(null);
-          alert(`Imóvel de ID ${propertyId} foi editado.`);
-          closeModal();
-          window.location.reload();
-        };
-        handleEdit();
-      } catch (err) {
-        console.error("Erro ao editar imóvel:", err);
-      }
-    };
+    try {
+      const handleEdit = async () => {
+        const response = await updateImovel(propertyToSend);
+        console.log("resposta", response);
+        setProperties((prev) =>
+          prev.map((p) => (p.id === propertyId ? propertyToSend : p))
+        );
+
+        setSelectedProperty(null);
+        alert(`Imóvel de ID ${propertyId} foi editado.`);
+        closeModal();
+      };
+      handleEdit();
+    } catch (err) {
+      console.error("Erro ao editar imóvel:", err);
+    }
   };
+
   const addPropertyFunction = (property) => {
     console.log(property);
     const { img, descricao, ...temporaryProperty } = property;
@@ -156,12 +154,23 @@ function AdminPage() {
     (type, id) => {
       const selectProperty = properties.find((property) => property.id === id);
       setSelectedProperty(selectProperty);
-      console.log(id, selectProperty);
-      setModalType(type);
       setPropertyId(id);
+      setModalType(type);
+
+      setTimeout(() => {
+        console.log(
+          "Modal aberto:",
+          type,
+          "ID:",
+          id,
+          "Property:",
+          selectProperty
+        );
+      }, 0);
     },
     [properties]
   );
+
   const closeModal = useCallback(() => {
     setModalType(null);
     setPropertyId(null);
@@ -243,9 +252,8 @@ function AdminPage() {
 }
 
 function EditProperty({ functions, property }) {
+  console.log("Property recebida no modal:", property);
   if (!property) return <p>Carregando dados do imóvel...</p>;
-
-  console.log(property);
   return (
     <div>
       <div className="flex items-left space-y-4 space-x-4 -mb-2 flex-cols-2 md:flex-cols-1">
