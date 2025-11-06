@@ -18,7 +18,7 @@ function LoginPage() {
         console.log("resposta", response);
         if (response.status === 200) {
           localStorage.setItem("token", response.data.token);
-          const expiryTime = Date.now() + 60 * 60 * 1000;
+          const expiryTime = Date.now() + 10 * 1000;
           localStorage.setItem("token_expiry", expiryTime);
           navigate("/admin/logged");
         }
