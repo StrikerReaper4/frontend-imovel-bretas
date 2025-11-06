@@ -2,27 +2,39 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
+import { Login } from "../services/userService";
 function LoginPage() {
   const navigate = useNavigate();
-  const [loginInfos, setLoginInfos] = useState({ usuario: "", senha: "" });
-
+  const [loginInfos, setLoginInfos] = useState({ email: "", senha: "" });
+  const efetuarLogin = () => {
+    try {
+      const handleLogin = async () => {
+        const response = await Login(loginInfos);
+        console.log("resposta", response);
+      };
+    } catch (error) {
+      console.error(err);
+    }
+  };
   return (
     <>
+      {" "}
       <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
+        {" "}
         <div className="w-96 p-6 bg-white rounded-xl shadow-md">
-          <img src="/logo-nobg.png" alt="Logo" className="h-25 mx-auto" />
+          {" "}
+          <img src="/logo-nobg.png" alt="Logo" className="h-25 mx-auto" />{" "}
           <Input
-            type="text"
-            label="Usuário"
-            id="username"
-            value={loginInfos.usuario}
+            type="email"
+            label="Email"
+            id="email"
+            value={loginInfos.email}
             setValue={(newValue) =>
-              setLoginInfos({ ...loginInfos, usuario: newValue })
+              setLoginInfos({ ...loginInfos, email: newValue })
             }
             placeholder="Digite seu usuário"
             className="mt-2"
-          />
+          />{" "}
           <Input
             type="password"
             label="Senha"
@@ -33,19 +45,18 @@ function LoginPage() {
             }
             placeholder="Digite sua senha"
             className="mt-2"
-          />
+          />{" "}
           <Button
             label="Entrar"
             wid="full"
             className="p-2 mt-3"
             onClick={() => {
-              navigate("/admin/logged");
+              efetuarLogin();
             }}
-          />
-        </div>
-      </div>
+          />{" "}
+        </div>{" "}
+      </div>{" "}
     </>
   );
 }
-
 export default LoginPage;
