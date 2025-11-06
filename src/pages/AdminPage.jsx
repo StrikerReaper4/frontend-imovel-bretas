@@ -158,6 +158,9 @@ function AdminPage() {
     temporaryProperty.banheiros = Number(temporaryProperty.banheiros);
     temporaryProperty.vagas = Number(temporaryProperty.vagas);
     temporaryProperty.valor = Number(temporaryProperty.valor);
+    if (!temporaryProperty.tipo) {
+      temporaryProperty.tipo = "Casa";
+    }
     console.log(temporaryProperty);
     try {
       const handleCreate = async () => {
