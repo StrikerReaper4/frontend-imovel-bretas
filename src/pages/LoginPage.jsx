@@ -12,6 +12,7 @@ function LoginPage() {
         const response = await Login(loginInfos);
         console.log("resposta", response);
       };
+      handleLogin();
     } catch (error) {
       console.error(err);
     }
@@ -32,7 +33,7 @@ function LoginPage() {
             setValue={(newValue) =>
               setLoginInfos({ ...loginInfos, email: newValue })
             }
-            placeholder="Digite seu usuário"
+            placeholder="Digite seu email"
             className="mt-2"
           />{" "}
           <Input
