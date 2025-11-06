@@ -32,12 +32,18 @@ function AdminPage() {
     setProperties(items);
   };
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token != null) {
-      console.log("Liberado", token);
-    } else {
+    try {
+      const token = localStorage.getItem("token");
+      const expiry = localStorage.getItem("token_expiry");
+
+      if (!token || Date.now() > expiry) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("token_expiry");
+        navigate("/admin");
+      }
+    } catch (error) {
+      console.log(error);
       navigate("/admin");
-      return <h1>Bloqueado</h1>;
     }
     const fetchProperties = async () => {
       try {
