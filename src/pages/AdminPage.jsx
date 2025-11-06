@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import FilterCard from "../components/FilterCard";
 import CardProperty from "../components/CardProperty";
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getImoveis,
   deleteImovel,
@@ -15,6 +16,7 @@ import Button from "../components/Button";
 import Loading from "../components/Loading";
 
 function AdminPage() {
+  const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [modalType, setModalType] = useState(null);
   const [propertyId, setPropertyId] = useState(null);
@@ -30,6 +32,13 @@ function AdminPage() {
     setProperties(items);
   };
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token != null) {
+      console.log("Liberado", token);
+    } else {
+      navigate("/admin");
+      return <h1>Bloqueado</h1>;
+    }
     const fetchProperties = async () => {
       try {
         const data = await getImoveis();

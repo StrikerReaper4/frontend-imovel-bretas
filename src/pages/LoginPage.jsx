@@ -16,6 +16,10 @@ function LoginPage() {
       const handleLogin = async () => {
         const response = await Login(loginInfos);
         console.log("resposta", response);
+        if (response.status === 200) {
+          localStorage.setItem("token", response.data.token);
+          navigate("/admin/logged");
+        }
       };
       handleLogin();
     } catch (error) {
