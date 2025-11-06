@@ -5,7 +5,12 @@ import { useState } from "react";
 import { Login } from "../services/userService";
 function LoginPage() {
   const navigate = useNavigate();
-  const [loginInfos, setLoginInfos] = useState({ email: "", senha: "" });
+  const [loginInfos, setLoginInfos] = useState({
+    nome: "admin",
+    email: "",
+    senha: "",
+    role: "admin",
+  });
   const efetuarLogin = () => {
     try {
       const handleLogin = async () => {
