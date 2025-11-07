@@ -79,6 +79,7 @@ function AdminPage() {
           ind: Number(p.ind),
         }));
         setProperties(normalized);
+        console.log(normalized);
       } catch (err) {
         console.error("Erro ao pegar imóveis:", err);
       }
@@ -110,18 +111,17 @@ function AdminPage() {
     }
 
     const propertyId = selectedProperty.ind;
-    const { ind, imagens, ...temporaryProperty } = selectedProperty;
 
     const propertyToSend = {
-      ...temporaryProperty,
       id: propertyId,
-      area: sanitizeNumber(temporaryProperty.area),
-      quartos: sanitizeNumber(temporaryProperty.quartos),
-      banheiros: sanitizeNumber(temporaryProperty.banheiros),
-      vagas: sanitizeNumber(temporaryProperty.vagas),
-      valor: sanitizeNumber(temporaryProperty.valor),
-      numero: sanitizeNumber(temporaryProperty.numero),
-      cep: String(temporaryProperty.cep).replace(/[^\d]/g, ""),
+      area: sanitizeNumber(selectedProperty.area),
+      quartos: sanitizeNumber(selectedProperty.quartos),
+      banheiros: sanitizeNumber(selectedProperty.banheiros),
+      vagas: sanitizeNumber(selectedProperty.vagas),
+      valor: sanitizeNumber(selectedProperty.valor),
+      numero: sanitizeNumber(selectedProperty.numero),
+      cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
+      tipo: selectedProperty.tipo || "Casa",
     };
 
     try {
@@ -140,17 +140,21 @@ function AdminPage() {
   };
 
   const addPropertyFunction = (property) => {
-    const { img, descricao, ...temporaryProperty } = property;
-    temporaryProperty.area = Number(temporaryProperty.area);
-    temporaryProperty.quartos = Number(temporaryProperty.quartos);
-    temporaryProperty.banheiros = Number(temporaryProperty.banheiros);
-    temporaryProperty.vagas = Number(temporaryProperty.vagas);
-    temporaryProperty.valor = Number(temporaryProperty.valor);
-    if (!temporaryProperty.tipo) temporaryProperty.tipo = "Casa";
+    const propertyToSend = {
+      id: propertyId,
+      area: sanitizeNumber(selectedProperty.area),
+      quartos: sanitizeNumber(selectedProperty.quartos),
+      banheiros: sanitizeNumber(selectedProperty.banheiros),
+      vagas: sanitizeNumber(selectedProperty.vagas),
+      valor: sanitizeNumber(selectedProperty.valor),
+      numero: sanitizeNumber(selectedProperty.numero),
+      cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
+    };
+    if (!selectedProperty.tipo) selectedProperty.tipo = "Casa";
 
     try {
       const handleCreate = async () => {
-        await createImovel(temporaryProperty);
+        await createImovel(propertyToSend);
         alert("Novo imóvel adicionado.");
         closeModal();
         window.location.reload();
@@ -170,6 +174,7 @@ function AdminPage() {
       setSelectedProperty(selectProperty);
       setModalType(type);
       setPropertyId(numericId);
+      console.log(selectedProperty);
     },
     [properties]
   );

@@ -27,7 +27,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   return (
     <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[400px] mb-4">
       <img
-        src={property?.img || "/placeholder_house.jpg"} // imagem genérica
+        src={property?.imagem || "/placeholder_house.jpg"} // imagem genérica
         alt="Imagem do Imóvel"
         className="w-full h-[170px] object-cover mb-4 rounded-xl"
       />
