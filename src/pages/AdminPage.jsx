@@ -1,21 +1,19 @@
-import { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
-
 import Header from "../components/Header";
+import { FaPlus } from "react-icons/fa";
 import FilterCard from "../components/FilterCard";
 import CardProperty from "../components/CardProperty";
-import Modal from "../components/Modal";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import Loading from "../components/Loading";
-
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getImoveis,
   deleteImovel,
   createImovel,
   updateImovel,
 } from "../services/imovelService";
+import Modal from "../components/Modal";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Loading from "../components/Loading";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -30,6 +28,7 @@ function AdminPage() {
   }
 
   const recieveFilterProperties = (items) => {
+    console.log("Recebendo filtro", items);
     setProperties(items);
   };
 
@@ -37,6 +36,7 @@ function AdminPage() {
     try {
       const token = localStorage.getItem("token");
       const expiry = localStorage.getItem("token_expiry");
+
       if (!token || Date.now() > expiry) {
         localStorage.removeItem("token");
         localStorage.removeItem("token_expiry");
@@ -52,22 +52,23 @@ function AdminPage() {
         const data = await getImoveis();
         if (data.length === 0) {
           const newImovel = {
+            ind: 0,
             tipo: "Casa",
-            rua: "Rua Exemplo",
+            rua: "Rua dos Imóveis",
             numero: "123",
-            bairro: "Centro",
-            cidade: "Cidade",
-            estado: "Estado",
+            bairro: "Bairro dos Imóveis",
+            cidade: "Cidade dos Imóveis",
+            estado: "Estado dos Imóveis",
             cep: "00000-000",
             pais: "Brasil",
             area: 100,
             quartos: 2,
-            banheiros: 1,
-            suites: 0,
-            vagas: 1,
+            banheiros: 2,
+            suites: 1,
+            vagas: 2,
             valor: 100000,
             id_pessoa: 1,
-            descricao: "Imóvel de exemplo",
+            descricao: "Descrição dos Imóveis",
             img: "/placeholder_house.jpg",
           };
           await createImovel(newImovel);
@@ -92,9 +93,9 @@ function AdminPage() {
         setProperties((prev) =>
           prev.filter((property) => property.ind !== propertyId)
         );
-        setSelectedProperty(null);
-        alert(`Imóvel ${propertyId} deletado.`);
+        alert(`Imóvel de ind ${propertyId} foi deletado.`);
         closeModal();
+        window.location.reload();
       };
       handleDelete();
     } catch (err) {
@@ -103,64 +104,72 @@ function AdminPage() {
   };
 
   const editPropertyFunction = () => {
-    if (!selectedProperty) return;
+    if (!selectedProperty) {
+      console.error("Nenhum imóvel selecionado para edição.");
+      return;
+    }
 
-    const id = selectedProperty.ind;
+    const propertyId = selectedProperty.ind;
+    const { ind, imagens, ...temporaryProperty } = selectedProperty;
 
     const propertyToSend = {
-      ...selectedProperty,
-      numero: sanitizeNumber(selectedProperty.numero),
-      cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
-      area: sanitizeNumber(selectedProperty.area),
-      quartos: sanitizeNumber(selectedProperty.quartos),
-      banheiros: sanitizeNumber(selectedProperty.banheiros),
-      suites: sanitizeNumber(selectedProperty.suites),
-      vagas: sanitizeNumber(selectedProperty.vagas),
-      valor: sanitizeNumber(selectedProperty.valor),
-      id,
+      ...temporaryProperty,
+      id: propertyId,
+      area: sanitizeNumber(temporaryProperty.area),
+      quartos: sanitizeNumber(temporaryProperty.quartos),
+      banheiros: sanitizeNumber(temporaryProperty.banheiros),
+      vagas: sanitizeNumber(temporaryProperty.vagas),
+      valor: sanitizeNumber(temporaryProperty.valor),
+      numero: sanitizeNumber(temporaryProperty.numero),
+      cep: String(temporaryProperty.cep).replace(/[^\d]/g, ""),
     };
 
-    const handleEdit = async () => {
-      await updateImovel(propertyToSend);
-      setProperties((prev) =>
-        prev.map((p) => (p.ind === id ? propertyToSend : p))
-      );
-      alert(`Imóvel ${id} atualizado com sucesso!`);
-      closeModal();
-    };
-    handleEdit();
+    try {
+      const handleEdit = async () => {
+        await updateImovel(propertyToSend);
+        setProperties((prev) =>
+          prev.map((p) => (p.ind === propertyId ? propertyToSend : p))
+        );
+        alert(`Imóvel de ind ${propertyId} foi editado.`);
+        closeModal();
+      };
+      handleEdit();
+    } catch (err) {
+      console.error("Erro ao editar imóvel:", err);
+    }
   };
 
   const addPropertyFunction = (property) => {
-    const propertyToSend = {
-      ...property,
-      numero: sanitizeNumber(property.numero),
-      cep: String(property.cep).replace(/[^\d]/g, ""),
-      area: sanitizeNumber(property.area),
-      quartos: sanitizeNumber(property.quartos),
-      banheiros: sanitizeNumber(property.banheiros),
-      suites: sanitizeNumber(property.suites),
-      vagas: sanitizeNumber(property.vagas),
-      valor: sanitizeNumber(property.valor),
-      id_pessoa: 1,
-    };
+    const { img, descricao, ...temporaryProperty } = property;
+    temporaryProperty.area = Number(temporaryProperty.area);
+    temporaryProperty.quartos = Number(temporaryProperty.quartos);
+    temporaryProperty.banheiros = Number(temporaryProperty.banheiros);
+    temporaryProperty.vagas = Number(temporaryProperty.vagas);
+    temporaryProperty.valor = Number(temporaryProperty.valor);
+    if (!temporaryProperty.tipo) temporaryProperty.tipo = "Casa";
 
-    const handleCreate = async () => {
-      await createImovel(propertyToSend);
-      alert("Novo imóvel adicionado!");
-      closeModal();
-      window.location.reload();
-    };
-    handleCreate();
+    try {
+      const handleCreate = async () => {
+        await createImovel(temporaryProperty);
+        alert("Novo imóvel adicionado.");
+        closeModal();
+        window.location.reload();
+      };
+      handleCreate();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const openModal = useCallback(
     (type, id = null) => {
-      if (!id && type !== "add") return;
-      const selected = properties.find((p) => Number(p.ind) === Number(id));
-      setSelectedProperty(selected);
+      const numericId = Number(id);
+      const selectProperty = properties.find(
+        (property) => Number(property.ind) === numericId
+      );
+      setSelectedProperty(selectProperty);
       setModalType(type);
-      setPropertyId(id);
+      setPropertyId(numericId);
     },
     [properties]
   );
@@ -168,6 +177,7 @@ function AdminPage() {
   const closeModal = useCallback(() => {
     setModalType(null);
     setPropertyId(null);
+    setSelectedProperty(null);
   }, []);
 
   if (properties.length === 0) return <Loading />;
@@ -181,11 +191,11 @@ function AdminPage() {
           title="Editar Imóvel"
           data={
             <EditProperty
-              property={selectedProperty}
               functions={{
                 edit: editPropertyFunction,
                 change: setSelectedProperty,
               }}
+              property={selectedProperty}
             />
           }
           onClose={closeModal}
@@ -194,6 +204,7 @@ function AdminPage() {
 
       {modalType === "delete" && (
         <Modal
+          propertyId={propertyId}
           title="Tem certeza em deletar o imóvel?"
           data={
             <DeleteProperty
@@ -213,12 +224,12 @@ function AdminPage() {
         />
       )}
 
-      <div className="bg-[#F3F3F3] grid grid-cols-[400px_2fr] max-[710px]:grid-cols-1 p-4 pb-28">
+      <div className="bg-[#F3F3F3] grid grid-cols-[400px_2fr] max-[710px]:grid-cols-1 p-4 pb-28 overflow-y-auto">
         <div className="sticky top-4 self-start max-[710px]:static max-[710px]:mb-8">
           <FilterCard admin={true} onFilter={recieveFilterProperties} />
         </div>
 
-        <div className="space-y-1 text-center">
+        <div className="space-y-1 items-center justify-center text-center">
           <h2 className="text-3xl mb-4 title">Destaques</h2>
           <div className="flex flex-wrap gap-8 justify-center items-center">
             {properties.map((property, index) => (
@@ -235,7 +246,7 @@ function AdminPage() {
 
       <div
         className="fixed bottom-3 right-3 cursor-pointer bg-[#0f3e58] rounded-full w-16 h-16 flex items-center justify-center hover:bg-[#14506e] transition"
-        onClick={() => openModal("add")}
+        onClick={() => openModal("add", null)}
       >
         <FaPlus size={40} className="text-white" />
       </div>
@@ -243,125 +254,167 @@ function AdminPage() {
   );
 }
 
-// ✅ Componente Editar Imóvel — agora com TODOS os campos
+// ✅ EditProperty agora com rolagem e todos os campos
 function EditProperty({ functions, property }) {
-  if (!property) return <p>Carregando imóvel...</p>;
-
-  const handleChange = (field, value) =>
-    functions.change({ ...property, [field]: value });
+  if (!property) return <p>Carregando dados do imóvel...</p>;
 
   return (
-    <div className="space-y-4">
+    <div className="max-h-[70vh] overflow-y-auto pr-2">
+      {/* Localização */}
+      <div className="flex flex-wrap gap-4">
+        <Input
+          type="text"
+          label="País"
+          select={true}
+          selectOptions={["Brasil", "Estados Unidos", "Portugal"]}
+          value={property.pais}
+          setValue={(v) => functions.change({ ...property, pais: v })}
+        />
+        <Input
+          type="text"
+          label="Estado"
+          value={property.estado}
+          setValue={(v) => functions.change({ ...property, estado: v })}
+        />
+        <Input
+          type="text"
+          label="Cidade"
+          value={property.cidade}
+          setValue={(v) => functions.change({ ...property, cidade: v })}
+        />
+        <Input
+          type="text"
+          label="Bairro"
+          value={property.bairro}
+          setValue={(v) => functions.change({ ...property, bairro: v })}
+        />
+      </div>
+
+      {/* Endereço */}
+      <div className="flex flex-wrap gap-4 mt-2">
+        <Input
+          type="text"
+          label="Rua"
+          value={property.rua}
+          setValue={(v) => functions.change({ ...property, rua: v })}
+        />
+        <Input
+          type="text"
+          label="Número"
+          value={property.numero}
+          setValue={(v) => functions.change({ ...property, numero: v })}
+        />
+        <Input
+          type="text"
+          label="CEP"
+          value={property.cep}
+          setValue={(v) => functions.change({ ...property, cep: v })}
+        />
+      </div>
+
+      {/* Dados gerais */}
+      <div className="flex flex-wrap gap-4 mt-2">
+        <Input
+          type="text"
+          label="Situação"
+          select={true}
+          selectOptions={["Venda", "Aluguel"]}
+          value={property.situacao}
+          setValue={(v) => functions.change({ ...property, situacao: v })}
+        />
+        <Input
+          type="text"
+          label="Tipo de Imóvel"
+          select={true}
+          selectOptions={["Casa", "Apartamento", "Terreno"]}
+          value={property.tipo}
+          setValue={(v) => functions.change({ ...property, tipo: v })}
+        />
+        <Input
+          type="number"
+          label="Valor"
+          value={property.valor}
+          setValue={(v) => functions.change({ ...property, valor: v })}
+        />
+      </div>
+
+      {/* Estrutura */}
+      <div className="flex flex-wrap gap-4 mt-2">
+        <Input
+          type="number"
+          label="Quartos"
+          value={property.quartos}
+          setValue={(v) => functions.change({ ...property, quartos: v })}
+        />
+        <Input
+          type="number"
+          label="Banheiros"
+          value={property.banheiros}
+          setValue={(v) => functions.change({ ...property, banheiros: v })}
+        />
+        <Input
+          type="number"
+          label="Vagas"
+          value={property.vagas}
+          setValue={(v) => functions.change({ ...property, vagas: v })}
+        />
+        <Input
+          type="number"
+          label="Área (m²)"
+          value={property.area}
+          setValue={(v) => functions.change({ ...property, area: v })}
+        />
+      </div>
+
+      {/* Descrição e imagens */}
       <Input
-        label="Tipo"
-        value={property.tipo}
-        setValue={(v) => handleChange("tipo", v)}
-      />
-      <Input
-        label="Rua"
-        value={property.rua}
-        setValue={(v) => handleChange("rua", v)}
-      />
-      <Input
-        label="Número"
-        value={property.numero}
-        setValue={(v) => handleChange("numero", v)}
-      />
-      <Input
-        label="Bairro"
-        value={property.bairro}
-        setValue={(v) => handleChange("bairro", v)}
-      />
-      <Input
-        label="Cidade"
-        value={property.cidade}
-        setValue={(v) => handleChange("cidade", v)}
-      />
-      <Input
-        label="Estado"
-        value={property.estado}
-        setValue={(v) => handleChange("estado", v)}
-      />
-      <Input
-        label="CEP"
-        value={property.cep}
-        setValue={(v) => handleChange("cep", v)}
-      />
-      <Input
-        label="País"
-        value={property.pais}
-        setValue={(v) => handleChange("pais", v)}
-      />
-      <Input
-        label="Área (m²)"
-        value={property.area}
-        setValue={(v) => handleChange("area", v)}
-      />
-      <Input
-        label="Quartos"
-        value={property.quartos}
-        setValue={(v) => handleChange("quartos", v)}
-      />
-      <Input
-        label="Banheiros"
-        value={property.banheiros}
-        setValue={(v) => handleChange("banheiros", v)}
-      />
-      <Input
-        label="Suítes"
-        value={property.suites}
-        setValue={(v) => handleChange("suites", v)}
-      />
-      <Input
-        label="Vagas"
-        value={property.vagas}
-        setValue={(v) => handleChange("vagas", v)}
-      />
-      <Input
-        label="Valor (R$)"
-        value={property.valor}
-        setValue={(v) => handleChange("valor", v)}
-      />
-      <Input
+        type="text"
         label="Descrição"
-        textarea
+        textarea={true}
         rows={3}
         value={property.descricao}
-        setValue={(v) => handleChange("descricao", v)}
+        setValue={(v) => functions.change({ ...property, descricao: v })}
       />
+
       <Input
         type="file"
-        label="Imagem"
+        label="Imagens"
         wid="full"
-        className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md"
-        setValue={(e) =>
-          handleChange("img", URL.createObjectURL(e.target.files[0]))
+        multiple
+        className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md file:hover:bg-[#0d3246] cursor-pointer"
+        setValue={(files) =>
+          functions.change({
+            ...property,
+            imagens: Array.from(files.target.files),
+          })
         }
       />
-      <div className="flex justify-center mt-4">
-        <Button label="Salvar Alterações" wid="full" onClick={functions.edit} />
+
+      <div className="flex items-center justify-center mt-4">
+        <Button label="Salvar" wid="full" onClick={() => functions.edit()} />
       </div>
     </div>
   );
 }
 
-// Modal de Deletar
 function DeleteProperty({ functions, propertyId }) {
   return (
     <div>
-      <p className="text-left text-[#0f3e58] text-md mt-2">
-        Deseja realmente excluir o imóvel ID {propertyId}? Esta ação é
-        irreversível.
+      <p className="text-left antialiased text-[#0f3e58] text-md mt-2">
+        Esta ação é irreversível. Ao confirmar, todos os dados do imóvel de ind{" "}
+        {propertyId} serão perdidos.
       </p>
-      <div className="flex gap-4 mt-4 justify-center">
+      <div className="flex items-center justify-center mt-4 gap-4">
         <Button
           label="Cancelar"
           onClick={functions.close}
+          wid="1/2"
           className="bg-gray-500 hover:bg-gray-600"
         />
         <Button
           label="Deletar"
           onClick={functions.delete}
+          wid="1/2"
           className="bg-red-600 hover:bg-red-700"
         />
       </div>
@@ -369,7 +422,6 @@ function DeleteProperty({ functions, propertyId }) {
   );
 }
 
-// Modal de Adicionar
 function AddProperty({ functions }) {
   const [property, setProperty] = useState({
     tipo: "",
@@ -380,57 +432,23 @@ function AddProperty({ functions }) {
     estado: "",
     cep: "",
     pais: "",
-    area: "",
-    quartos: "",
-    banheiros: "",
-    suites: "",
-    vagas: "",
-    valor: "",
+    area: 0,
+    quartos: 0,
+    banheiros: 0,
+    vagas: 0,
+    valor: 0,
+    id_pessoa: 1,
     descricao: "",
-    img: "",
+    imagens: [],
   });
 
   return (
-    <div className="space-y-4">
-      {Object.keys(property).map((key) =>
-        key === "descricao" ? (
-          <Input
-            key={key}
-            label="Descrição"
-            textarea
-            rows={3}
-            value={property[key]}
-            setValue={(v) => setProperty({ ...property, [key]: v })}
-          />
-        ) : key === "img" ? (
-          <Input
-            key={key}
-            type="file"
-            label="Imagem"
-            wid="full"
-            setValue={(e) =>
-              setProperty({
-                ...property,
-                img: URL.createObjectURL(e.target.files[0]),
-              })
-            }
-          />
-        ) : (
-          <Input
-            key={key}
-            label={key.charAt(0).toUpperCase() + key.slice(1)}
-            value={property[key]}
-            setValue={(v) => setProperty({ ...property, [key]: v })}
-          />
-        )
-      )}
-      <div className="flex justify-center mt-4">
-        <Button
-          label="Salvar"
-          wid="full"
-          onClick={() => functions.add(property)}
-        />
-      </div>
+    <div className="max-h-[70vh] overflow-y-auto pr-2">
+      {/* Usa os mesmos campos do EditProperty */}
+      <EditProperty
+        functions={{ edit: () => functions.add(property), change: setProperty }}
+        property={property}
+      />
     </div>
   );
 }
