@@ -308,7 +308,7 @@ function EditProperty({ functions, property }) {
           type="text"
           label="Número"
           value={property.numero}
-          setValue={(v) => functions.change({ ...property, numero: v })}
+          setValue={(v) => functions.change({ ...property, numero: String(v) })}
         />
         <Input
           type="text"
@@ -406,7 +406,7 @@ function DeleteProperty({ functions, propertyId }) {
   return (
     <div>
       <p className="text-left antialiased text-[#0f3e58] text-md mt-2">
-        Esta ação é irreversível. Ao confirmar, todos os dados do imóvel de ind{" "}
+        Esta ação é irreversível. Ao confirmar, todos os dados do imóvel de id{" "}
         {propertyId} serão perdidos.
       </p>
       <div className="flex items-center justify-center mt-4 gap-4">
