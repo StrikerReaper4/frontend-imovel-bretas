@@ -15,6 +15,8 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 
+JSON.stringify();
+
 function AdminPage() {
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
@@ -305,7 +307,7 @@ function EditProperty({ functions, property }) {
           setValue={(v) => functions.change({ ...property, rua: v })}
         />
         <Input
-          type="text"
+          type="number"
           label="Número"
           value={property.numero}
           setValue={(v) => functions.change({ ...property, numero: String(v) })}
