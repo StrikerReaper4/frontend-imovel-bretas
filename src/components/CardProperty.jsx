@@ -22,12 +22,18 @@ export default function CardProperty({ property, admin, handleOpen }) {
     admin = false;
   }
 
+  function byteArrayToUrl(byteArray, contentType) {
+    const blob = new Blob([new Uint8Array(byteArray)], { type: contentType });
+    return URL.createObjectURL(blob);
+  }
+  const imageUrl = byteArrayToUrl(property.img, property.content_type);
+
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
   return (
     <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[400px] mb-4">
       <img
-        src={property?.imagem || "/placeholder_house.jpg"} // imagem genérica
+        src={imageUrl || "/placeholder_house.jpg"} // imagem genérica
         alt="Imagem do Imóvel"
         className="w-full h-[170px] object-cover mb-4 rounded-xl"
       />
