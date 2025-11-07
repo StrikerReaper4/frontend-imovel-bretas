@@ -113,15 +113,29 @@ function AdminPage() {
     const { ind, imagens, ...temporaryProperty } = selectedProperty;
 
     const propertyToSend = {
-      ...temporaryProperty,
       id: propertyId,
+
+      // 🔤 Campos textuais
+      tipo: String(temporaryProperty.tipo || ""),
+      rua: String(temporaryProperty.rua || ""),
+      numero: String(temporaryProperty.numero || ""),
+      bairro: String(temporaryProperty.bairro || ""),
+      cidade: String(temporaryProperty.cidade || ""),
+      estado: String(temporaryProperty.estado || ""),
+      cep: String(temporaryProperty.cep || "").replace(/[^\d]/g, ""),
+      pais: String(temporaryProperty.pais || ""),
+      situacao: String(temporaryProperty.situacao || ""),
+      descricao: String(temporaryProperty.descricao || ""),
+
+      // 🔢 Campos numéricos
       area: sanitizeNumber(temporaryProperty.area),
       quartos: sanitizeNumber(temporaryProperty.quartos),
       banheiros: sanitizeNumber(temporaryProperty.banheiros),
       vagas: sanitizeNumber(temporaryProperty.vagas),
       valor: sanitizeNumber(temporaryProperty.valor),
-      numero: sanitizeNumber(temporaryProperty.numero),
-      cep: String(temporaryProperty.cep).replace(/[^\d]/g, ""),
+
+      // Campo de imagem (opcional)
+      imagem: temporaryProperty.imagens?.[0] || null,
     };
 
     try {
