@@ -367,6 +367,7 @@ function EditProperty({ functions, property }) {
       </div>
 
       {/* Descrição e imagens */}
+      {/* Descrição */}
       <Input
         type="text"
         label="Descrição"
@@ -376,6 +377,7 @@ function EditProperty({ functions, property }) {
         setValue={(v) => functions.change({ ...property, descricao: v })}
       />
 
+      {/* Imagens */}
       <Input
         type="file"
         label="Imagens"
