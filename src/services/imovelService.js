@@ -77,6 +77,9 @@ export const deleteImovel = async (id) => {
 
 export const updateImovel = async (imovel) => {
   try {
+    if (imovel.numero !== undefined && imovel.numero !== null) {
+      imovel.numero = String(imovel.numero);
+    }
     let response;
     if (imovel.imagens && imovel.imagens.length > 0) {
       const formData = toFormData(imovel);
