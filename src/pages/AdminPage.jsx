@@ -150,11 +150,12 @@ function AdminPage() {
       numero: sanitizeNumber(selectedProperty.numero),
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
     };
-    if (!selectedProperty.tipo) selectedProperty.tipo = "Casa";
+    if (!propertyToSend.tipo) propertyToSend.tipo = "Casa";
 
     try {
       const handleCreate = async () => {
         await createImovel(propertyToSend);
+        console.log(propertyToSend);
         alert("Novo imóvel adicionado.");
         closeModal();
         window.location.reload();
@@ -386,10 +387,10 @@ function EditProperty({ functions, property }) {
         wid="full"
         multiple
         className="file:bg-[#0f3e58] file:text-white file:p-1 file:rounded-md file:hover:bg-[#0d3246] cursor-pointer"
-        setValue={(files) =>
+        setValue={(e) =>
           functions.change({
             ...property,
-            imagens: Array.from(files.target.files),
+            imagens: Array.from(e.target.files),
           })
         }
       />
