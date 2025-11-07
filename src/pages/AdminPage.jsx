@@ -50,7 +50,6 @@ function AdminPage() {
     const fetchProperties = async () => {
       try {
         const data = await getImoveis();
-
         if (data.length === 0) {
           const newImovel = {
             ind: 0,
@@ -75,7 +74,6 @@ function AdminPage() {
           await createImovel(newImovel);
           window.location.reload();
         }
-
         const normalized = data.map((p) => ({
           ...p,
           ind: Number(p.ind),
@@ -85,7 +83,6 @@ function AdminPage() {
         console.error("Erro ao pegar imóveis:", err);
       }
     };
-
     fetchProperties();
   }, []);
 
@@ -116,29 +113,15 @@ function AdminPage() {
     const { ind, imagens, ...temporaryProperty } = selectedProperty;
 
     const propertyToSend = {
+      ...temporaryProperty,
       id: propertyId,
-
-      // 🔤 Campos textuais
-      tipo: String(temporaryProperty.tipo || ""),
-      rua: String(temporaryProperty.rua || ""),
-      numero: String(temporaryProperty.numero || ""),
-      bairro: String(temporaryProperty.bairro || ""),
-      cidade: String(temporaryProperty.cidade || ""),
-      estado: String(temporaryProperty.estado || ""),
-      cep: String(temporaryProperty.cep || "").replace(/[^\d]/g, ""),
-      pais: String(temporaryProperty.pais || ""),
-      situacao: String(temporaryProperty.situacao || ""),
-      descricao: String(temporaryProperty.descricao || ""),
-
-      // 🔢 Campos numéricos
       area: sanitizeNumber(temporaryProperty.area),
       quartos: sanitizeNumber(temporaryProperty.quartos),
       banheiros: sanitizeNumber(temporaryProperty.banheiros),
       vagas: sanitizeNumber(temporaryProperty.vagas),
       valor: sanitizeNumber(temporaryProperty.valor),
-
-      // ⚙️ Campo de imagem (opcional)
-      imagem: temporaryProperty.imagens?.[0] || null,
+      numero: sanitizeNumber(temporaryProperty.numero),
+      cep: String(temporaryProperty.cep).replace(/[^\d]/g, ""),
     };
 
     try {
@@ -158,13 +141,11 @@ function AdminPage() {
 
   const addPropertyFunction = (property) => {
     const { img, descricao, ...temporaryProperty } = property;
-
     temporaryProperty.area = Number(temporaryProperty.area);
     temporaryProperty.quartos = Number(temporaryProperty.quartos);
     temporaryProperty.banheiros = Number(temporaryProperty.banheiros);
     temporaryProperty.vagas = Number(temporaryProperty.vagas);
     temporaryProperty.valor = Number(temporaryProperty.valor);
-
     if (!temporaryProperty.tipo) temporaryProperty.tipo = "Casa";
 
     try {
@@ -186,7 +167,6 @@ function AdminPage() {
       const selectProperty = properties.find(
         (property) => Number(property.ind) === numericId
       );
-
       setSelectedProperty(selectProperty);
       setModalType(type);
       setPropertyId(numericId);
@@ -205,7 +185,6 @@ function AdminPage() {
   return (
     <>
       <Header admin={true} />
-
       {modalType === "edit" && (
         <Modal
           propertyId={propertyId}
@@ -229,10 +208,7 @@ function AdminPage() {
           title="Tem certeza em deletar o imóvel?"
           data={
             <DeleteProperty
-              functions={{
-                close: closeModal,
-                delete: deletePropertyFunction,
-              }}
+              functions={{ close: closeModal, delete: deletePropertyFunction }}
               propertyId={propertyId}
             />
           }
@@ -278,7 +254,7 @@ function AdminPage() {
   );
 }
 
-// ✅ Componente EditProperty
+// ✅ EditProperty agora com rolagem e todos os campos
 function EditProperty({ functions, property }) {
   if (!property) return <p>Carregando dados do imóvel...</p>;
 
@@ -390,13 +366,12 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
+      {/* Descrição e imagens */}
       {/* Descrição */}
       <Input
         type="text"
         label="Descrição"
-        textarea={true}
-        rows={3}
-        value={property.descricao}
+@@ -376,81 +377,82 @@
         setValue={(v) => functions.change({ ...property, descricao: v })}
       />
 
@@ -422,7 +397,6 @@ function EditProperty({ functions, property }) {
   );
 }
 
-// 🧨 Componente DeleteProperty
 function DeleteProperty({ functions, propertyId }) {
   return (
     <div>
@@ -448,7 +422,6 @@ function DeleteProperty({ functions, propertyId }) {
   );
 }
 
-// 🏗️ Componente AddProperty
 function AddProperty({ functions }) {
   const [property, setProperty] = useState({
     tipo: "",
@@ -471,6 +444,7 @@ function AddProperty({ functions }) {
 
   return (
     <div className="max-h-[70vh] overflow-y-auto pr-2">
+      {/* Usa os mesmos campos do EditProperty */}
       <EditProperty
         functions={{ edit: () => functions.add(property), change: setProperty }}
         property={property}
