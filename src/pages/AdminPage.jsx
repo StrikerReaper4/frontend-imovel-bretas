@@ -371,7 +371,6 @@ function EditProperty({ functions, property }) {
       <Input
         type="text"
         label="Descrição"
-@@ -376,81 +377,82 @@
         setValue={(v) => functions.change({ ...property, descricao: v })}
       />
 
