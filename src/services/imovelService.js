@@ -76,17 +76,24 @@ export const deleteImovel = async (id) => {
 
 export const updateImovel = async (imovel) => {
   try {
+    // ✅ Garante que o ID exista
+    if (!imovel.id && !imovel.id_imovel) {
+      throw new Error("ID do imóvel não informado para atualização");
+    }
+
+    // ✅ O backend espera o campo 'id', não 'id_imovel'
+    imovel.id = imovel.id || imovel.id_imovel;
+
+    // ✅ Converte número para string (Go lê tudo como texto no FormData)
     if (imovel.numero !== undefined && imovel.numero !== null) {
       imovel.numero = String(imovel.numero);
     }
 
-    // ✅ Sempre cria um FormData, mesmo que não haja imagens
+    // ✅ Cria o FormData com todos os campos
     const formData = toFormData(imovel);
 
-    // Se não houver imagens, adiciona um placeholder vazio para evitar erro do backend
-    if (!imovel.imagens || imovel.imagens.length === 0) {
-      formData.append("imagens", ""); // ou null, conforme backend aceita
-    }
+    // Se não houver imagem, não há problema — o Go lida com isso
+    // (ele mostra "⚠️ Nenhuma imagem enviada, seguindo sem arquivo.")
 
     const response = await api.post("/atualizar/imovel", formData);
     return response.data;
