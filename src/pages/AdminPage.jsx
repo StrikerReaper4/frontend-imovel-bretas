@@ -117,6 +117,10 @@ function AdminPage() {
     const propertyToSend = {
       id: propertyId,
       rua: String(selectedProperty.rua),
+      bairro: String(selectedProperty.bairro),
+      cidade: String(selectedProperty.cidade),
+      estado: String(selectedProperty.estado),
+      pais: String(selectedProperty.pais),
       area: sanitizeNumber(selectedProperty.area),
       quartos: sanitizeNumber(selectedProperty.quartos),
       banheiros: sanitizeNumber(selectedProperty.banheiros),
@@ -126,6 +130,7 @@ function AdminPage() {
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
       tipo: selectedProperty.tipo || "Casa",
       descricao: String(selectedProperty.descricao),
+      imagens: selectedProperty.imagens || [],
     };
 
     try {
