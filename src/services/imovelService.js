@@ -53,9 +53,8 @@ export const filterImoveis = async (filtro) => {
 export const createImovel = async (imovel) => {
   try {
     const formData = toFormData(imovel);
-    const response = await api.post("/criar/imovel", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    // ⚠️ Removido o header manual — Axios define automaticamente o boundary correto
+    const response = await api.post("/criar/imovel", formData);
     return response.data;
   } catch (error) {
     console.error("Erro ao criar imóvel:", error);
@@ -80,17 +79,16 @@ export const updateImovel = async (imovel) => {
     if (imovel.numero !== undefined && imovel.numero !== null) {
       imovel.numero = String(imovel.numero);
     }
-    let response;
-    if (imovel.imagens && imovel.imagens.length > 0) {
-      const formData = toFormData(imovel);
-      response = await api.post("/atualizar/imovel", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    } else {
-      console.log("VINDO DO SERVICE", imovel);
-      response = await api.post("/atualizar/imovel", imovel);
+
+    // ✅ Sempre cria um FormData, mesmo que não haja imagens
+    const formData = toFormData(imovel);
+
+    // Se não houver imagens, adiciona um placeholder vazio para evitar erro do backend
+    if (!imovel.imagens || imovel.imagens.length === 0) {
+      formData.append("imagens", ""); // ou null, conforme backend aceita
     }
 
+    const response = await api.post("/atualizar/imovel", formData);
     return response.data;
   } catch (error) {
     console.error("Erro ao atualizar imóvel:", error);
