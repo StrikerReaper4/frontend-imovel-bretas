@@ -280,25 +280,25 @@ function EditProperty({ functions, property }) {
           select={true}
           selectOptions={["Brasil", "Estados Unidos", "Portugal"]}
           value={property.pais}
-          setValue={(v) => functions.change({ ...property, pais: v })}
+          setValue={(v) => functions.change({ ...property, pais: String(v) })}
         />
         <Input
           type="text"
           label="Estado"
           value={property.estado}
-          setValue={(v) => functions.change({ ...property, estado: v })}
+          setValue={(v) => functions.change({ ...property, estado: String(v) })}
         />
         <Input
           type="text"
           label="Cidade"
           value={property.cidade}
-          setValue={(v) => functions.change({ ...property, cidade: v })}
+          setValue={(v) => functions.change({ ...property, cidade: String(v) })}
         />
         <Input
           type="text"
           label="Bairro"
           value={property.bairro}
-          setValue={(v) => functions.change({ ...property, bairro: v })}
+          setValue={(v) => functions.change({ ...property, bairro: String(v) })}
         />
       </div>
 
@@ -332,7 +332,7 @@ function EditProperty({ functions, property }) {
           select={true}
           selectOptions={["Venda", "Aluguel"]}
           value={property.situacao}
-          setValue={(v) => functions.change({ ...property, situacao: v })}
+          setValue={(v) => functions.change({ ...property, situacao: String(v) })}
         />
         <Input
           type="text"
@@ -340,7 +340,7 @@ function EditProperty({ functions, property }) {
           select={true}
           selectOptions={["Casa", "Apartamento", "Terreno"]}
           value={property.tipo}
-          setValue={(v) => functions.change({ ...property, tipo: v })}
+          setValue={(v) => functions.change({ ...property, tipo: String(v) })}
         />
         <Input
           type="number"
@@ -383,7 +383,7 @@ function EditProperty({ functions, property }) {
       <Input
         type="text"
         label="Descrição"
-        setValue={(v) => functions.change({ ...property, descricao: v })}
+        setValue={(v) => functions.change({ ...property, descricao: String (v) })}
       />
 
       {/* Imagens */}
