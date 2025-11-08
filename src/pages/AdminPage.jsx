@@ -308,7 +308,7 @@ function EditProperty({ functions, property }) {
           type="text"
           label="Rua"
           value={property.rua}
-          setValue={(v) => functions.change({ ...property, rua: v })}
+          setValue={(v) => functions.change({ ...property, rua: String(v) })}
         />
         <Input
           type="number"
