@@ -52,6 +52,14 @@ export const filterImoveis = async (filtro) => {
 
 export const createImovel = async (imovel) => {
   try {
+       // ✅ Inclui o id da pessoa (usuário logado)
+       const user = JSON.parse(localStorage.getItem("user")); 
+       if (user?.id) {
+         imovel.id_pessoa = user.id;
+       } else {
+         console.warn("⚠️ Nenhum usuário logado encontrado. id_pessoa ausente.");
+       }
+
     // ✅ Corrige o nome do campo de imagem para o backend
     if (imovel.imagens && imovel.imagens.length > 0) {
       imovel.imagem = imovel.imagens[0]; // pega só a primeira imagem
