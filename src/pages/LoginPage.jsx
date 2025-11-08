@@ -17,9 +17,25 @@ function LoginPage() {
         const response = await Login(loginInfos);
         console.log("resposta", response);
         if (response.status === 200) {
+          // Salva token e expiry
           localStorage.setItem("token", response.data.token);
           const expiryTime = Date.now() + 60 * 60 * 1000;
           localStorage.setItem("token_expiry", expiryTime);
+
+          // SALVA O USUÁRIO (ESSENCIAL para id_pessoa)
+          if (response.data.user) {
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            console.log(
+              "✅ Usuário salvo no localStorage:",
+              response.data.user
+            );
+          } else {
+            console.warn(
+              "⚠️ Login OK, mas response.data.user está vazio:",
+              response.data
+            );
+          }
+
           navigate("/admin/logged");
         }
       };
