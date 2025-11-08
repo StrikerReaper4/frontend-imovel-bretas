@@ -320,7 +320,7 @@ function EditProperty({ functions, property }) {
           type="text"
           label="CEP"
           value={property.cep}
-          setValue={(v) => functions.change({ ...property, cep: v })}
+          setValue={(v) => functions.change({ ...property, cep: String(v) })}
         />
       </div>
 
@@ -332,7 +332,9 @@ function EditProperty({ functions, property }) {
           select={true}
           selectOptions={["Venda", "Aluguel"]}
           value={property.situacao}
-          setValue={(v) => functions.change({ ...property, situacao: String(v) })}
+          setValue={(v) =>
+            functions.change({ ...property, situacao: String(v) })
+          }
         />
         <Input
           type="text"
@@ -346,7 +348,7 @@ function EditProperty({ functions, property }) {
           type="number"
           label="Valor"
           value={property.valor}
-          setValue={(v) => functions.change({ ...property, valor: v })}
+          setValue={(v) => functions.change({ ...property, valor: Number(v) })}
         />
       </div>
 
@@ -356,25 +358,29 @@ function EditProperty({ functions, property }) {
           type="number"
           label="Quartos"
           value={property.quartos}
-          setValue={(v) => functions.change({ ...property, quartos: v })}
+          setValue={(v) =>
+            functions.change({ ...property, quartos: Number(v) })
+          }
         />
         <Input
           type="number"
           label="Banheiros"
           value={property.banheiros}
-          setValue={(v) => functions.change({ ...property, banheiros: v })}
+          setValue={(v) =>
+            functions.change({ ...property, banheiros: Number(v) })
+          }
         />
         <Input
           type="number"
           label="Vagas"
           value={property.vagas}
-          setValue={(v) => functions.change({ ...property, vagas: v })}
+          setValue={(v) => functions.change({ ...property, vagas: Number(v) })}
         />
         <Input
           type="number"
           label="Área (m²)"
           value={property.area}
-          setValue={(v) => functions.change({ ...property, area: v })}
+          setValue={(v) => functions.change({ ...property, area: Number(v) })}
         />
       </div>
 
@@ -383,7 +389,9 @@ function EditProperty({ functions, property }) {
       <Input
         type="text"
         label="Descrição"
-        setValue={(v) => functions.change({ ...property, descricao: String (v) })}
+        setValue={(v) =>
+          functions.change({ ...property, descricao: String(v) })
+        }
       />
 
       {/* Imagens */}
