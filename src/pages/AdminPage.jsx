@@ -151,15 +151,21 @@ function AdminPage() {
   const addPropertyFunction = (property) => {
     const propertyToSend = {
       id: propertyId,
+      rua: String(selectedProperty.rua),
+      bairro: String(selectedProperty.bairro),
+      cidade: String(selectedProperty.cidade),
+      estado: String(selectedProperty.estado),
+      pais: String(selectedProperty.pais),
       area: sanitizeNumber(selectedProperty.area),
       quartos: sanitizeNumber(selectedProperty.quartos),
       banheiros: sanitizeNumber(selectedProperty.banheiros),
       vagas: sanitizeNumber(selectedProperty.vagas),
       valor: sanitizeNumber(selectedProperty.valor),
       numero: sanitizeNumber(selectedProperty.numero),
-      descricao: String(selectedProperty.descricao),
-      rua: String(selectedProperty.rua),
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
+      tipo: selectedProperty.tipo || "Casa",
+      descricao: String(selectedProperty.descricao),
+      imagens: selectedProperty.imagens || [],
     };
     if (!propertyToSend.tipo) propertyToSend.tipo = "Casa";
 
