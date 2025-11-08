@@ -88,6 +88,9 @@ export const updateImovel = async (imovel) => {
     if (imovel.numero !== undefined && imovel.numero !== null) {
       imovel.numero = String(imovel.numero);
     }
+     if (imovel.bairro !== undefined && imovel.bairro !== null) {
+      imovel.bairro = String(imovel.bairro);
+    }
 
     // ✅ Cria o FormData com todos os campos
     const formData = toFormData(imovel);
