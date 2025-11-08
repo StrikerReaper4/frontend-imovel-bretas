@@ -116,6 +116,7 @@ function AdminPage() {
 
     const propertyToSend = {
       id: propertyId,
+      rua: String(selectedProperty.rua),
       area: sanitizeNumber(selectedProperty.area),
       quartos: sanitizeNumber(selectedProperty.quartos),
       banheiros: sanitizeNumber(selectedProperty.banheiros),
@@ -124,6 +125,7 @@ function AdminPage() {
       numero: sanitizeNumber(selectedProperty.numero),
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
       tipo: selectedProperty.tipo || "Casa",
+      descricao: String(selectedProperty.descricao),
     };
 
     try {
@@ -132,7 +134,7 @@ function AdminPage() {
         setProperties((prev) =>
           prev.map((p) => (p.ind === propertyId ? propertyToSend : p))
         );
-        alert(`Imóvel de ind ${propertyId} foi editado.`);
+        alert(`Imóvel de id ${propertyId} foi editado.`);
         closeModal();
       };
       handleEdit();
@@ -150,6 +152,8 @@ function AdminPage() {
       vagas: sanitizeNumber(selectedProperty.vagas),
       valor: sanitizeNumber(selectedProperty.valor),
       numero: sanitizeNumber(selectedProperty.numero),
+      descricao: String(selectedProperty.descricao),
+      rua: String(selectedProperty.rua),
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
     };
     if (!propertyToSend.tipo) propertyToSend.tipo = "Casa";
