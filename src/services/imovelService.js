@@ -52,6 +52,12 @@ export const filterImoveis = async (filtro) => {
 
 export const createImovel = async (imovel) => {
   try {
+    // ✅ Corrige o nome do campo de imagem para o backend
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      imovel.imagem = imovel.imagens[0]; // pega só a primeira imagem
+      delete imovel.imagens; // remove o campo plural
+    }
+
     const formData = toFormData(imovel);
     // ⚠️ Removido o header manual — Axios define automaticamente o boundary correto
     const response = await api.post("/criar/imovel", formData);
@@ -88,8 +94,13 @@ export const updateImovel = async (imovel) => {
     if (imovel.numero !== undefined && imovel.numero !== null) {
       imovel.numero = String(imovel.numero);
     }
-     if (imovel.bairro !== undefined && imovel.bairro !== null) {
+    if (imovel.bairro !== undefined && imovel.bairro !== null) {
       imovel.bairro = String(imovel.bairro);
+    }
+    // ✅ Corrige o nome do campo de imagem para o backend
+    if (imovel.imagens && imovel.imagens.length > 0) {
+      imovel.imagem = imovel.imagens[0]; // pega só a primeira imagem
+      delete imovel.imagens; // remove o campo plural
     }
 
     // ✅ Cria o FormData com todos os campos
