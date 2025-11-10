@@ -333,24 +333,39 @@ function EditProperty({ functions, property }) {
           select={true}
           selectOptions={["Brasil", "Estados Unidos", "Portugal"]}
           value={property.pais}
-          setValue={(v) => functions.change({ ...property, pais: String(v) })}
+          setValue={(v) =>
+            functions.change({
+              ...property,
+              pais: String(v),
+              estado: "",
+              cidade: "",
+            })
+          }
         />
-        <Input
-          type="text"
-          label="Estado"
-          select={true}
-          selectOptions={estados}
-          value={property.estado}
-          setValue={(v) => functions.change({ ...property, estado: String(v) })}
-        />
-        <Input
-          type="text"
-          label="Cidade"
-          select={true}
-          selectOptions={cidades}
-          value={property.cidade}
-          setValue={(v) => functions.change({ ...property, cidade: String(v) })}
-        />
+        {property.pais === "Brasil" && (
+          <>
+            <Input
+              type="text"
+              label="Estado"
+              select={true}
+              selectOptions={estados}
+              value={property.estado}
+              setValue={(v) =>
+                functions.change({ ...property, estado: String(v) })
+              }
+            />
+            <Input
+              type="text"
+              label="Cidade"
+              select={true}
+              selectOptions={cidades}
+              value={property.cidade}
+              setValue={(v) =>
+                functions.change({ ...property, cidade: String(v) })
+              }
+            />
+          </>
+        )}
         <Input
           type="text"
           label="Bairro"
@@ -441,6 +456,7 @@ function EditProperty({ functions, property }) {
       <Input
         type="text"
         label="Descrição"
+        value={property.descricao}
         setValue={(v) =>
           functions.change({ ...property, descricao: String(v) })
         }

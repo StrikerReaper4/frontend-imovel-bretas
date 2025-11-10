@@ -113,7 +113,7 @@ function Home() {
 
       <div className="bg-[#F3F3F3] grid grid-cols-[400px_3fr] max-[870px]:grid-cols-1 p-4 pb-28">
         <div className="sticky top-4 self-start max-[870px]:static max-[710px]:mb-8">
-          <FilterCard onFilter={recieveFilterProperties} />
+          <FilterCard admin={false} onFilter={recieveFilterProperties} />
         </div>
 
         <div className="space-y-1 items-center justify-center text-center">
