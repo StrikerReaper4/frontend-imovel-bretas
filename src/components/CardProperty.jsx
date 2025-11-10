@@ -22,7 +22,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
     admin = false;
   }
   const imageUrl = property?.img
-    ? `data:image/jpeg;base64,${property.img}`
+    ? `data:image/jpg;base64,${property.img}`
     : "/placeholder_house.jpg";
 
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
