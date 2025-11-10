@@ -279,11 +279,53 @@ function AdminPage() {
 
 // ✅ EditProperty agora com rolagem e todos os campos
 function EditProperty({ functions, property }) {
+  const [estados, setEstados] = useState([]);
+  const [cidades, setCidades] = useState(["Qualquer"]);
+
+  useEffect(() => {
+    const buscarEstados = async () => {
+      try {
+        const res = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        const data = await res.json();
+        const listaEstados = data
+          .map((e) => e.sigla)
+          .sort((a, b) => a.localeCompare(b));
+        setEstados(["Qualquer", ...listaEstados]);
+      } catch (err) {
+        console.error("Erro ao buscar estados:", err);
+      }
+    };
+    buscarEstados();
+  }, []);
+
+  useEffect(() => {
+    const buscarCidades = async () => {
+      if (!property.estado || property.estado === "Qualquer") {
+        setCidades(["Qualquer"]);
+        return;
+      }
+      try {
+        const res = await fetch(
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${property.estado}/municipios`
+        );
+        const data = await res.json();
+        const listaCidades = data
+          .map((e) => e.nome)
+          .sort((a, b) => a.localeCompare(b));
+        setCidades(["Qualquer", ...listaCidades]);
+      } catch (e) {
+        console.error("Erro ao buscar cidades");
+      }
+    };
+    buscarCidades();
+  }, [property.estado]);
+
   if (!property) return <p>Carregando dados do imóvel...</p>;
 
   return (
     <div className="max-h-[70vh] overflow-y-auto pr-2">
-      {/* Localização */}
       <div className="flex flex-wrap gap-4">
         <Input
           type="text"
@@ -296,12 +338,16 @@ function EditProperty({ functions, property }) {
         <Input
           type="text"
           label="Estado"
+          select={true}
+          selectOptions={estados}
           value={property.estado}
           setValue={(v) => functions.change({ ...property, estado: String(v) })}
         />
         <Input
           type="text"
           label="Cidade"
+          select={true}
+          selectOptions={cidades}
           value={property.cidade}
           setValue={(v) => functions.change({ ...property, cidade: String(v) })}
         />
@@ -313,7 +359,6 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
-      {/* Endereço */}
       <div className="flex flex-wrap gap-4 mt-2">
         <Input
           type="text"
@@ -335,7 +380,6 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
-      {/* Dados gerais */}
       <div className="flex flex-wrap gap-4 mt-2">
         <Input
           type="text"
@@ -363,7 +407,6 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
-      {/* Estrutura */}
       <div className="flex flex-wrap gap-4 mt-2">
         <Input
           type="number"
@@ -395,8 +438,6 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
-      {/* Descrição e imagem */}
-      {/* Descrição */}
       <Input
         type="text"
         label="Descrição"
@@ -405,7 +446,6 @@ function EditProperty({ functions, property }) {
         }
       />
 
-      {/* imagem */}
       <Input
         type="file"
         label="Imagens"

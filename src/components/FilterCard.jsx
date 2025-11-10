@@ -1,9 +1,11 @@
 import Input from "./Input";
 import Button from "./Button";
 import { filterImoveis } from "../services/imovelService";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function FilterCard({ admin, onFilter }) {
+  const [estados, setEstados] = useState([]);
+  const [cidades, setCidades] = useState(["Qualquer"]);
   const [filter, setFilter] = useState({
     id: "",
     tipo: "",
@@ -22,47 +24,76 @@ function FilterCard({ admin, onFilter }) {
     admin = false;
   }
 
+  const buscarCidades = async () => {
+    try {
+      const res = await fetch(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${filter.estado}/municipios`
+      );
+      const data = await res.json();
+      const listaCidades = data
+        .map((e) => e.nome)
+        .sort((a, b) => a.localeCompare(b));
+      setCidades(["Qualquer", ...listaCidades]);
+    } catch (e) {
+      console.error("Erro ao buscar cidades");
+    }
+  };
+
+  useEffect(() => {
+    const buscarEstados = async () => {
+      try {
+        const res = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        const data = await res.json();
+        const listaEstados = data
+          .map((e) => e.sigla)
+          .sort((a, b) => a.localeCompare(b));
+        setEstados(["Qualquer", ...listaEstados]);
+      } catch (err) {
+        console.error("Erro ao buscar estados:", err);
+      }
+    };
+    buscarEstados();
+  }, []);
+
+  useEffect(() => {
+    if (filter.estado && filter.estado !== "Qualquer") {
+      buscarCidades();
+    } else {
+      setCidades(["Qualquer"]);
+    }
+  }, [filter.estado]);
+
   const handleApplyFilters = (e) => {
     e.preventDefault();
-    console.log(filter);
-    if (filter.tipo === "Qualquer") {
-      setFilter({ ...filter, tipo: "" });
-    }
-    if (filter.pais === "Qualquer") {
-      setFilter({ ...filter, pais: "" });
-    }
-    if (filter.estado === "Qualquer") {
-      setFilter({ ...filter, estado: "" });
-    }
-    if (filter.cidade === "Qualquer") {
-      setFilter({ ...filter, cidade: "" });
-    }
-    /*Converter para Number */
+    const cleanedFilter = { ...filter };
+    ["tipo", "pais", "estado", "cidade"].forEach((key) => {
+      if (cleanedFilter[key] === "Qualquer") cleanedFilter[key] = "";
+    });
     const numericFilter = {
-      ...filter,
-      quartos: Number(filter.quartos) || 0,
-      banheiros: Number(filter.banheiros) || 0,
-      vagas: Number(filter.vagas) || 0,
-      de: Number(filter.de) || 0,
-      ate: Number(filter.ate) || 0,
+      ...cleanedFilter,
+      quartos: Number(cleanedFilter.quartos) || 0,
+      banheiros: Number(cleanedFilter.banheiros) || 0,
+      vagas: Number(cleanedFilter.vagas) || 0,
+      de: Number(cleanedFilter.de) || 0,
+      ate: Number(cleanedFilter.ate) || 0,
     };
     const fetchFilters = async () => {
       const imoveis = await filterImoveis(numericFilter);
-      console.log(imoveis);
       onFilter(imoveis);
       if (imoveis.length === 0) {
-        alert("Nenhum imovel encontrado");
-        window.location.reload();
+        alert("Nenhum imóvel encontrado.");
       }
     };
     fetchFilters();
   };
+
   return (
     <>
       <div className="bg-white w-full rounded-lg p-4 shadow-md text-center">
         <h2 className="title text-3xl mb-4">Filtragem</h2>
         <form>
-          {/* Campo de pesquisa por ID (modo admin) */}
           <div className={`${admin ? "" : "hidden"} flex flex-wrap gap-4`}>
             <Input
               type="number"
@@ -74,8 +105,6 @@ function FilterCard({ admin, onFilter }) {
             />
           </div>
           <hr className={`${admin ? "" : "hidden"} my-2 text-gray-300`} />
-
-          {/* Tipo de operação e imóvel */}
           <div className={`${admin ? "hidden" : ""} flex flex-wrap gap-4`}>
             <Input
               type="text"
@@ -88,8 +117,6 @@ function FilterCard({ admin, onFilter }) {
             />
           </div>
           <hr className={`${admin ? "hidden" : ""} my-2 text-gray-300`} />
-
-          {/* Localização - agora com País */}
           <h3 className="text-2xl font-semibold text-left mb-2 mt-2">
             Localização
           </h3>
@@ -113,7 +140,7 @@ function FilterCard({ admin, onFilter }) {
               label="Estado"
               wid="full md:150"
               select="true"
-              selectOptions={["Qualquer", "SP", "RJ", "MG", "PR"]}
+              selectOptions={estados}
               value={filter.estado}
               setValue={(newValue) =>
                 setFilter({ ...filter, estado: newValue })
@@ -124,13 +151,7 @@ function FilterCard({ admin, onFilter }) {
               label="Cidade"
               wid="full md:150"
               select="true"
-              selectOptions={[
-                "Qualquer",
-                "São Paulo",
-                "Rio de Janeiro",
-                "Belo Horizonte",
-                "Curitiba",
-              ]}
+              selectOptions={cidades}
               value={filter.cidade}
               setValue={(newValue) =>
                 setFilter({ ...filter, cidade: newValue })
@@ -146,10 +167,7 @@ function FilterCard({ admin, onFilter }) {
               }
             />
           </div>
-
           <hr className="my-2 text-gray-300" />
-
-          {/* Preço */}
           <h3 className="text-2xl font-semibold text-left mb-2 mt-2">Preço</h3>
           <div className="flex flex-wrap gap-4">
             <Input
@@ -169,10 +187,7 @@ function FilterCard({ admin, onFilter }) {
               setValue={(newValue) => setFilter({ ...filter, ate: newValue })}
             />
           </div>
-
           <hr className={`my-2 text-gray-300 ${admin ? "hidden" : ""}`} />
-
-          {/* Cômodo */}
           <h3
             className={`text-2xl font-semibold text-left mb-2 mt-2 ${
               admin ? "hidden" : ""
@@ -213,7 +228,6 @@ function FilterCard({ admin, onFilter }) {
               setValue={(newValue) => setFilter({ ...filter, vagas: newValue })}
             />
           </div>
-
           <Button
             label="Aplicar Filtros"
             wid="full"
