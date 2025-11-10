@@ -130,7 +130,7 @@ function AdminPage() {
       cep: String(selectedProperty.cep).replace(/[^\d]/g, ""),
       tipo: selectedProperty.tipo || "Casa",
       descricao: String(selectedProperty.descricao),
-      imagens: selectedProperty.imagens || [],
+      imagem: selectedProperty.imagem || [],
     };
 
     try {
@@ -165,9 +165,9 @@ function AdminPage() {
       cep: String(property.cep).replace(/[^\d]/g, ""),
       tipo: property.tipo || "Casa",
       descricao: String(property.descricao),
-      imagens: property.imagens || [],
+      imagem: property.imagem || [],
+      //imagem_type
     };
-    if (!propertyToSend.tipo) propertyToSend.tipo = "Casa";
 
     try {
       const handleCreate = async () => {
@@ -395,7 +395,7 @@ function EditProperty({ functions, property }) {
         />
       </div>
 
-      {/* Descrição e imagens */}
+      {/* Descrição e imagem */}
       {/* Descrição */}
       <Input
         type="text"
@@ -405,7 +405,7 @@ function EditProperty({ functions, property }) {
         }
       />
 
-      {/* Imagens */}
+      {/* imagem */}
       <Input
         type="file"
         label="Imagens"
@@ -415,7 +415,7 @@ function EditProperty({ functions, property }) {
         setValue={(e) =>
           functions.change({
             ...property,
-            imagens: Array.from(e.target.files),
+            imagem: Array.from(e.target.files),
           })
         }
       />
@@ -469,7 +469,7 @@ function AddProperty({ functions }) {
     valor: 0,
     id_pessoa: 1,
     descricao: "",
-    imagens: [],
+    imagem: [],
   });
 
   return (

@@ -232,7 +232,10 @@ export default function Header({ admin }) {
             </div>
             <div
               className="flex justify-end mr-8 mb-2 gap-1 cursor-pointer align-middle"
-              onClick={() => navigate("/")}
+              onClick={() => {
+                localStorage.setItem("token", "");
+                navigate("/");
+              }}
             >
               <IoExitOutline size={40} className="text-white" />
               <h3 className="text-white font-bold text-2xl mt-1.5 align-middle">
