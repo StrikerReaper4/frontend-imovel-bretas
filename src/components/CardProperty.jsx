@@ -21,15 +21,9 @@ export default function CardProperty({ property, admin, handleOpen }) {
   if (admin === undefined) {
     admin = false;
   }
-
-  function byteArrayToUrl(byteArray, contentType) {
-    console.log(property.img);
-    const blob = new Blob([new Uint8Array(byteArray)], { type: contentType });
-    console.log("Convertendo...");
-    return URL.createObjectURL(blob);
-  }
-
-  const imageUrl = property.img ? byteArrayToUrl(property.img, "jpg") : "";
+  const imageUrl = property?.img
+    ? `data:image/jpeg;base64,${property.img}`
+    : "/placeholder_house.jpg";
 
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
