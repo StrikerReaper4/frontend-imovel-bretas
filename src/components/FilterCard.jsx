@@ -142,7 +142,7 @@ function FilterCard({ admin, onFilter }) {
               <Input
                 type="text"
                 label="Cidade"
-                wid="200"
+                wid="140"
                 select="true"
                 selectOptions={cidades}
                 value={filter.cidade}
@@ -155,7 +155,7 @@ function FilterCard({ admin, onFilter }) {
           <Input
             type="text"
             label="Bairro"
-            wid="170"
+            wid="120"
             value={filter.bairro}
             setValue={(newValue) => setFilter({ ...filter, bairro: newValue })}
           />
