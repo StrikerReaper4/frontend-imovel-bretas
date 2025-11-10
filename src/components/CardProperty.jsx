@@ -21,10 +21,12 @@ export default function CardProperty({ property, admin, handleOpen }) {
   if (admin === undefined) {
     admin = false;
   }
-  const imageUrl = property?.img
-    ? `data:image/jpg;base64,${property.img}`
+  const imageUrl = property?.imagem
+    ? `data:image/jpg;base64,${property.imagem}`
     : "/placeholder_house.jpg";
-
+  if (!imageUrl) {
+    console.log("IMagem renderizada", imageUrl);
+  }
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
   return (
