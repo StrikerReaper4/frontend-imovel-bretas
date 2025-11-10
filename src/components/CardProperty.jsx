@@ -24,8 +24,9 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const imageUrl = property?.imagem
     ? `data:image/jpg;base64,${property.imagem}`
     : "/placeholder_house.jpg";
-  if (!imageUrl) {
-    console.log("IMagem renderizada", imageUrl);
+
+  if (imageUrl != "/placeholder_house.jpg") {
+    console.log("Imagem renderizada", imageUrl);
   }
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
