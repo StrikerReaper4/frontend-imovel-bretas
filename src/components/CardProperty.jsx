@@ -23,11 +23,13 @@ export default function CardProperty({ property, admin, handleOpen }) {
   }
 
   function byteArrayToUrl(byteArray, contentType) {
+    console.log(property.img);
     const blob = new Blob([new Uint8Array(byteArray)], { type: contentType });
     console.log("Convertendo...");
     return URL.createObjectURL(blob);
   }
-  const imageUrl = byteArrayToUrl(property.img, "jpg");
+
+  const imageUrl = property.img ? byteArrayToUrl(property.img, "jpg") : "";
 
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 

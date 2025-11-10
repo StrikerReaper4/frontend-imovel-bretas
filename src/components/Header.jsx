@@ -239,7 +239,7 @@ export default function Header({ admin }) {
             >
               <IoExitOutline size={40} className="text-white" />
               <h3 className="text-white font-bold text-2xl mt-1.5 align-middle">
-                Suair
+                Svair
               </h3>
             </div>
           </header>
