@@ -33,7 +33,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
   return (
-    <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[400px] mb-4">
+    <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[350px] mb-4">
       <img
         src={imageUrl}
         alt="Imagem do Imóvel"
@@ -48,7 +48,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
         {property?.tipo}
       </span>
       <FaMapMarkerAlt size={25} className="inline-block" />
-      <h2 className="inline-block font-bold text-2xl align-middle text-wrap w-[80%]">
+      <h2 className="inline-block font-bold text-xl align-middle text-wrap w-[80%]">
         {address}
       </h2>
 
