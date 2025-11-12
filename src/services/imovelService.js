@@ -11,11 +11,8 @@ const toFormData = (obj) => {
 
     if (Array.isArray(value)) {
       value.forEach((item) => {
-        if (item instanceof File || item instanceof Blob) {
-          formData.append(key, item); // ✅ adiciona várias imagens corretamente
-        } else {
-          formData.append(`${key}[]`, item);
-        }
+        // ✅ Corrigido: SEM usar "[]"
+        formData.append(key, item);
       });
     } else if (value instanceof File || value instanceof Blob) {
       formData.append(key, value);
@@ -66,7 +63,6 @@ export const filterImoveis = async (filtro) => {
 // ==========================================
 export const createImovel = async (imovel) => {
   try {
-    // Adiciona ID do usuário logado
     const saved = JSON.parse(localStorage.getItem("user"));
     const user = saved?.user;
     if (user?.id) {
@@ -76,13 +72,11 @@ export const createImovel = async (imovel) => {
       console.warn("⚠️ Nenhum usuário logado encontrado. id_pessoa ausente.");
     }
 
-    // ✅ Mantém o array de imagens (não transforma em uma só)
     if (imovel.imagens && imovel.imagens.length > 0) {
       imovel.imagens = Array.from(imovel.imagens);
     }
 
     const formData = toFormData(imovel);
-
     const response = await api.post("/criar/imovel", formData);
     return response.data;
   } catch (error) {
@@ -117,21 +111,11 @@ export const updateImovel = async (imovel) => {
 
     imovel.id = imovel.id || imovel.id_imovel;
 
-    // Garante que campos numéricos sejam string (Go lê tudo como texto)
-    if (imovel.numero !== undefined && imovel.numero !== null) {
-      imovel.numero = String(imovel.numero);
-    }
-    if (imovel.bairro !== undefined && imovel.bairro !== null) {
-      imovel.bairro = String(imovel.bairro);
-    }
-
-    // ✅ Mantém o array de imagens, sem deletar o campo plural
     if (imovel.imagens && imovel.imagens.length > 0) {
       imovel.imagens = Array.from(imovel.imagens);
     }
 
     const formData = toFormData(imovel);
-
     const response = await api.post("/atualizar/imovel", formData);
     return response.data;
   } catch (error) {
