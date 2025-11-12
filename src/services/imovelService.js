@@ -1,14 +1,18 @@
 import api from "./api";
 
+// ==========================================
+// ✅ Converte qualquer objeto em FormData
+// ==========================================
 const toFormData = (obj) => {
   const formData = new FormData();
+
   for (const key in obj) {
     const value = obj[key];
 
     if (Array.isArray(value)) {
       value.forEach((item) => {
         if (item instanceof File || item instanceof Blob) {
-          formData.append(key, item); // múltiplas imagens
+          formData.append(key, item); // ✅ adiciona várias imagens corretamente
         } else {
           formData.append(`${key}[]`, item);
         }
@@ -21,12 +25,16 @@ const toFormData = (obj) => {
       formData.append(key, value);
     }
   }
+
   return formData;
 };
 
+// ==========================================
+// ✅ Pega todos os imóveis
+// ==========================================
 export const getImoveis = async () => {
   try {
-    const response = await api.post("/filtrar/imoveis", {}); // ✅ JSON vazio
+    const response = await api.post("/filtrar/imoveis", {});
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
@@ -37,9 +45,12 @@ export const getImoveis = async () => {
   }
 };
 
+// ==========================================
+// ✅ Filtra imóveis
+// ==========================================
 export const filterImoveis = async (filtro) => {
   try {
-    const response = await api.post("/filtrar/imoveis", filtro); // ✅ JSON normal
+    const response = await api.post("/filtrar/imoveis", filtro);
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
@@ -50,11 +61,14 @@ export const filterImoveis = async (filtro) => {
   }
 };
 
+// ==========================================
+// ✅ Cria imóvel (com suporte a múltiplas imagens)
+// ==========================================
 export const createImovel = async (imovel) => {
   try {
-    // ✅ Inclui o id da pessoa (usuário logado)
+    // Adiciona ID do usuário logado
     const saved = JSON.parse(localStorage.getItem("user"));
-    const user = saved?.user; // acessa o campo correto
+    const user = saved?.user;
     if (user?.id) {
       imovel.id_pessoa = user.id;
       console.log("✅ ID do usuário adicionado ao imóvel:", user.id);
@@ -62,14 +76,13 @@ export const createImovel = async (imovel) => {
       console.warn("⚠️ Nenhum usuário logado encontrado. id_pessoa ausente.");
     }
 
-    // ✅ Corrige o nome do campo de imagem para o backend
+    // ✅ Mantém o array de imagens (não transforma em uma só)
     if (imovel.imagens && imovel.imagens.length > 0) {
-      imovel.imagem = imovel.imagens[0]; // pega só a primeira imagem
-      delete imovel.imagens; // remove o campo plural
+      imovel.imagens = Array.from(imovel.imagens);
     }
 
     const formData = toFormData(imovel);
-    // ⚠️ Removido o header manual — Axios define automaticamente o boundary correto
+
     const response = await api.post("/criar/imovel", formData);
     return response.data;
   } catch (error) {
@@ -78,6 +91,9 @@ export const createImovel = async (imovel) => {
   }
 };
 
+// ==========================================
+// ✅ Deleta imóvel
+// ==========================================
 export const deleteImovel = async (id) => {
   try {
     const response = await api.post("/deletar/imovel", {
@@ -90,34 +106,31 @@ export const deleteImovel = async (id) => {
   }
 };
 
+// ==========================================
+// ✅ Atualiza imóvel (também suporta múltiplas imagens)
+// ==========================================
 export const updateImovel = async (imovel) => {
   try {
-    // ✅ Garante que o ID exista
     if (!imovel.id && !imovel.id_imovel) {
       throw new Error("ID do imóvel não informado para atualização");
     }
 
-    // ✅ O backend espera o campo 'id', não 'id_imovel'
     imovel.id = imovel.id || imovel.id_imovel;
 
-    // ✅ Converte número para string (Go lê tudo como texto no FormData)
+    // Garante que campos numéricos sejam string (Go lê tudo como texto)
     if (imovel.numero !== undefined && imovel.numero !== null) {
       imovel.numero = String(imovel.numero);
     }
     if (imovel.bairro !== undefined && imovel.bairro !== null) {
       imovel.bairro = String(imovel.bairro);
     }
-    // ✅ Corrige o nome do campo de imagem para o backend
+
+    // ✅ Mantém o array de imagens, sem deletar o campo plural
     if (imovel.imagens && imovel.imagens.length > 0) {
-      imovel.imagem = imovel.imagens[0]; // pega só a primeira imagem
-      delete imovel.imagens; // remove o campo plural
+      imovel.imagens = Array.from(imovel.imagens);
     }
 
-    // ✅ Cria o FormData com todos os campos
     const formData = toFormData(imovel);
-
-    // Se não houver imagem, não há problema — o Go lida com isso
-    // (ele mostra "⚠️ Nenhuma imagem enviada, seguindo sem arquivo.")
 
     const response = await api.post("/atualizar/imovel", formData);
     return response.data;
