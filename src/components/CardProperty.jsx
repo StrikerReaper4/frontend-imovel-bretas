@@ -35,10 +35,23 @@ export default function CardProperty({ property, admin, handleOpen }) {
   return (
     <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[350px] mb-4">
       <img
-        src={imageUrl}
-        alt="Imagem do Imóvel"
-        className="w-full h-[170px] object-cover mb-4 rounded-xl"
+        src={
+          Array.isArray(property.imagem) && property.imagem.length > 0
+            ? property.imagem[0]?.startsWith("data:image")
+              ? property.imagem[0]
+              : `data:image/jpeg;base64,${property.imagem[0]}`
+            : property.imagem?.startsWith("data:image")
+            ? property.imagem
+            : property.imagem
+            ? `data:image/jpeg;base64,${property.imagem}`
+            : "/placeholder_house.jpg"
+        }
+        alt="Imagem do imóvel"
+        className="w-full h-[170px] object-cover rounded-lg"
       />
+
+
+
       {admin && (
         <span className="text-[#9c894a] font-extrabold text-sm -mt-3 block">
           Id: {property?.ind}
