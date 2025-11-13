@@ -7,7 +7,7 @@ function FilterCard({ admin, onFilter }) {
   const [estados, setEstados] = useState([]);
   const [cidades, setCidades] = useState(["Qualquer"]);
   const [filter, setFilter] = useState({
-    id: "",
+    id_imovel: "",
     tipo: "",
     bairro: "",
     cidade: "",
@@ -68,6 +68,7 @@ function FilterCard({ admin, onFilter }) {
     });
     const numericFilter = {
       ...cleanedFilter,
+      id_imovel: Number(cleanedFilter.id_imovel),
       quartos: Number(cleanedFilter.quartos) || 0,
       banheiros: Number(cleanedFilter.banheiros) || 0,
       vagas: Number(cleanedFilter.vagas) || 0,
@@ -92,7 +93,7 @@ function FilterCard({ admin, onFilter }) {
             label="Pesquisa por ID"
             wid="full"
             placeholder="Ex: 7344"
-            value={filter.id}
+            value={filter.id_imovel}
             setValue={(newValue) => setFilter({ ...filter, id: newValue })}
           />
         </div>
