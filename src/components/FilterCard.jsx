@@ -94,7 +94,7 @@ function FilterCard({ admin, onFilter }) {
             wid="full"
             placeholder="Ex: 7344"
             value={filter.id_imovel}
-            setValue={(newValue) => setFilter({ ...filter, id: newValue })}
+            setValue={(newValue) => setFilter({ ...filter, id_imovel: newValue })}
           />
         </div>
         <hr className={`${admin ? "" : "hidden"} my-2 text-gray-300`} />
