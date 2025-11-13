@@ -61,9 +61,13 @@ export default function CardProperty({ property, admin, handleOpen }) {
         {property?.tipo}
       </span>
       <FaMapMarkerAlt size={25} className="inline-block" />
-      <h2 className="inline-block font-bold text-xl align-middle text-wrap w-[80%]">
-        {address}
-      </h2>
+   <h2
+    className="inline-block font-bold text-xl align-middle truncate w-[80%]"
+    title={address} // mostra tooltip completo ao passar o mouse
+  >
+    {address}
+  </h2>
+
 
       <div className="flex justify-between mt-2 max-w-[350px]">
         <div>
