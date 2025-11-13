@@ -53,7 +53,7 @@ function PropertySelected() {
       setImageSelected((prev) =>
         prev === property.imagem.length - 1 ? 0 : prev + 1
       );
-    }, 5000);
+    }, 1);
     return () => clearInterval(intervalo);
   }, [property]);
 
