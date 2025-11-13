@@ -17,27 +17,27 @@ export default function CardProperty({ property, admin, handleOpen }) {
     );
   };
 
-let imageSrc = "/placeholder_house.jpg";
-
-if (Array.isArray(property.imagem) && property.imagem.length > 0) {
-  const firstImage = property.imagem[0];
-  if (typeof firstImage === "string") {
-    imageSrc = firstImage.startsWith("data:image")
-      ? firstImage
-      : `data:image/jpeg;base64,${firstImage}`;
+  let imageSrc = "/placeholder_house.jpg";
+  
+  if (Array.isArray(property.imagem) && property.imagem.length > 0) {
+    const firstImage = property.imagem[0];
+    if (typeof firstImage === "string") {
+      imageSrc = firstImage.startsWith("data:image")
+        ? firstImage
+        : `data:image/jpeg;base64,${firstImage}`;
+    }
+  } else if (typeof property.imagem === "string" && property.imagem.length > 0) {
+    imageSrc = property.imagem.startsWith("data:image")
+      ? property.imagem
+      : `data:image/jpeg;base64,${property.imagem}`;
+  } else if (Array.isArray(property.imagens) && property.imagens.length > 0) {
+    const firstImage = property.imagens[0];
+    if (typeof firstImage === "string") {
+      imageSrc = firstImage.startsWith("data:image")
+        ? firstImage
+        : `data:image/jpeg;base64,${firstImage}`;
+    }
   }
-} else if (typeof property.imagem === "string" && property.imagem.length > 0) {
-  imageSrc = property.imagem.startsWith("data:image")
-    ? property.imagem
-    : `data:image/jpeg;base64,${property.imagem}`;
-} else if (Array.isArray(property.imagens) && property.imagens.length > 0) {
-  const firstImage = property.imagens[0];
-  if (typeof firstImage === "string") {
-    imageSrc = firstImage.startsWith("data:image")
-      ? firstImage
-      : `data:image/jpeg;base64,${firstImage}`;
-  }
-}
   if (admin === undefined) admin = false;
 
   let imageUrl = "/placeholder_house.jpg";
@@ -56,7 +56,7 @@ if (Array.isArray(property.imagem) && property.imagem.length > 0) {
   return (
     <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[350px] mb-4">
       <img
-        src={imgSrc}
+        src={imageSrc}
         alt="Imagem do imóvel"
         className="w-full h-[170px] object-cover rounded-lg"
       />
