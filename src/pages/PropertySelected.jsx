@@ -4,13 +4,15 @@ import Button from "../components/Button";
 import { useLocation } from "react-router-dom";
 import { FaAngleLeft, FaAngleRight, FaBath, FaCarAlt } from "react-icons/fa";
 import { IoIosBed } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getImoveis } from "../services/imovelService";
 import Loading from "../components/Loading";
 
 function PropertySelected() {
   const location = useLocation();
   const propertyId = location.pathname.split("/property/")[1];
+  const intervalRef = useRef(null);
+
 
   const [imageSelected, setImageSelected] = useState(0);
   const [properties, setProperties] = useState([]);
@@ -33,7 +35,12 @@ function PropertySelected() {
     };
     fetchProperties();
   }, []);
-
+  const stopImageChange = () => {
+      if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }
   useEffect(() => {
     if (properties.length > 0) {
       const found = properties.find(
@@ -47,14 +54,18 @@ function PropertySelected() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+
   useEffect(() => {
     if (!property?.imagem || property.imagem.length <= 1) return;
-    const intervalo = setInterval(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
       setImageSelected((prev) =>
         prev === property.imagem.length - 1 ? 0 : prev + 1
       );
-    }, 1);
-    return () => clearInterval(intervalo);
+    }, 10000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [property]);
 
   if (!property) return <Loading />;
@@ -101,8 +112,9 @@ function PropertySelected() {
 
               <img
                 src={imageUrl}
-                className="w-full max-w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover"
+                className="w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover"
                 alt="Imagem do imóvel"
+                onClick={()=>{stopImageChange()}}
               />
 
               <div
