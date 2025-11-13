@@ -112,8 +112,9 @@ function PropertySelected() {
 
               <img
                 src={imageUrl}
-                className="w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover"
+                className="w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover cursor-pointer"
                 alt="Imagem do imóvel"
+                title="Clique para pausar a troca"
                 onClick={()=>{stopImageChange()}}
               />
 
