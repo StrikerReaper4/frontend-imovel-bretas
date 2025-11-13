@@ -33,7 +33,7 @@ function FilterCard({ admin, onFilter }) {
         .sort((a, b) => a.localeCompare(b));
       setCidades(["Qualquer", ...listaCidades]);
     } catch (e) {
-      console.error("Erro ao buscar cidades");
+      console.error("Erro ao buscar cidades:", e);
     }
   };
 
@@ -63,26 +63,39 @@ function FilterCard({ admin, onFilter }) {
   const handleApplyFilters = (e) => {
     e.preventDefault();
     const cleanedFilter = { ...filter };
+
+    // Corrige o caso do "+5" vindo de select
+    if (cleanedFilter.quartos === "+5") cleanedFilter.quartos = 5;
+    if (cleanedFilter.banheiros === "+5") cleanedFilter.banheiros = 5;
+    if (cleanedFilter.vagas === "+5") cleanedFilter.vagas = 5;
+
     ["tipo", "pais", "estado", "cidade"].forEach((key) => {
       if (cleanedFilter[key] === "Qualquer") cleanedFilter[key] = "";
     });
+
     const numericFilter = {
       ...cleanedFilter,
-      id_imovel: Number(cleanedFilter.id_imovel),
+      id_imovel: Number(cleanedFilter.id_imovel) || 0,
       quartos: Number(cleanedFilter.quartos) || 0,
       banheiros: Number(cleanedFilter.banheiros) || 0,
       vagas: Number(cleanedFilter.vagas) || 0,
       de: Number(cleanedFilter.de) || 0,
       ate: Number(cleanedFilter.ate) || 0,
     };
+
     const fetchFilters = async () => {
-      const imoveis = await filterImoveis(numericFilter);
-      if (imoveis.length === 0) {
-        alert("Nenhum imóvel encontrado.");
-        return;
-      };
-      onFilter(imoveis);
+      try {
+        const imoveis = await filterImoveis(numericFilter);
+        if (!imoveis || imoveis.length === 0) {
+          alert("Nenhum imóvel encontrado.");
+          return;
+        }
+        onFilter(imoveis);
+      } catch (error) {
+        console.error("Erro ao filtrar imóveis:", error);
+      }
     };
+
     fetchFilters();
   };
 
@@ -90,29 +103,46 @@ function FilterCard({ admin, onFilter }) {
     <div className="bg-white w-full rounded-lg p-4 shadow-md text-center">
       <h2 className="title text-3xl mb-4">Filtragem</h2>
       <form>
-        <div className={`${admin ? "" : "hidden"} flex flex-wrap gap-4`}>
-          <Input
-            type="number"
-            label="Pesquisa por ID"
-            wid="full"
-            placeholder="Ex: 7344"
-            value={filter.id_imovel}
-            setValue={(newValue) => setFilter({ ...filter, id_imovel: newValue })}
-          />
-        </div>
-        <hr className={`${admin ? "" : "hidden"} my-2 text-gray-300`} />
-        <div className={`${admin ? "hidden" : ""} flex flex-wrap gap-4`}>
-          <Input
-            type="text"
-            label="Tipo de Imóvel"
-            wid="150"
-            select="true"
-            selectOptions={["Qualquer", "Casa", "Apartamento", "Terreno"]}
-            value={filter.tipo}
-            setValue={(newValue) => setFilter({ ...filter, tipo: newValue })}
-          />
-        </div>
-        <hr className={`${admin ? "hidden" : ""} my-2 text-gray-300`} />
+        {/* Filtro de ID - apenas admin */}
+        {admin && (
+          <>
+            <div className="flex flex-wrap gap-4">
+              <Input
+                type="number"
+                label="Pesquisa por ID"
+                wid="full"
+                placeholder="Ex: 7344"
+                value={filter.id_imovel}
+                setValue={(newValue) =>
+                  setFilter({ ...filter, id_imovel: newValue })
+                }
+              />
+            </div>
+            <hr className="my-2 text-gray-300" />
+          </>
+        )}
+
+        {/* Filtro tipo - usuários */}
+        {!admin && (
+          <>
+            <div className="flex flex-wrap gap-4">
+              <Input
+                type="text"
+                label="Tipo de Imóvel"
+                wid="150"
+                select="true"
+                selectOptions={["Qualquer", "Casa", "Apartamento", "Terreno"]}
+                value={filter.tipo}
+                setValue={(newValue) =>
+                  setFilter({ ...filter, tipo: newValue })
+                }
+              />
+            </div>
+            <hr className="my-2 text-gray-300" />
+          </>
+        )}
+
+        {/* País, Estado, Cidade, Bairro */}
         <div className="flex flex-wrap gap-4">
           <Input
             type="text"
@@ -122,14 +152,10 @@ function FilterCard({ admin, onFilter }) {
             selectOptions={["Qualquer", "Brasil", "Estados Unidos", "Portugal"]}
             value={filter.pais}
             setValue={(newValue) =>
-              setFilter({
-                ...filter,
-                pais: newValue,
-                estado: "",
-                cidade: "",
-              })
+              setFilter({ ...filter, pais: newValue, estado: "", cidade: "" })
             }
           />
+
           {filter.pais === "Brasil" && (
             <>
               <Input
@@ -156,6 +182,7 @@ function FilterCard({ admin, onFilter }) {
               />
             </>
           )}
+
           <Input
             type="text"
             label="Bairro"
@@ -164,7 +191,10 @@ function FilterCard({ admin, onFilter }) {
             setValue={(newValue) => setFilter({ ...filter, bairro: newValue })}
           />
         </div>
+
         <hr className="my-2 text-gray-300" />
+
+        {/* Valores */}
         <div className="flex flex-wrap gap-4">
           <Input
             type="number"
@@ -177,44 +207,56 @@ function FilterCard({ admin, onFilter }) {
           <Input
             type="number"
             label="Valor Máximo"
-            placeholder="R$ 1,000,000"
+            placeholder="R$ 1.000.000"
             wid="full md:150"
             value={filter.ate}
             setValue={(newValue) => setFilter({ ...filter, ate: newValue })}
           />
         </div>
-        <hr className={`my-2 text-gray-300 ${admin ? "hidden" : ""}`} />
-        <div className={`flex flex-wrap gap-4 ${admin ? "hidden" : ""}`}>
-          <Input
-            type="number"
-            label="Quartos"
-            wid="full md:150"
-            select="true"
-            selectOptions={[0, 1, 2, 3, 4, 5]}
-            value={filter.quartos}
-            setValue={(newValue) => setFilter({ ...filter, quartos: newValue })}
-          />
-          <Input
-            type="number"
-            label="Banheiros"
-            wid="full md:150"
-            select="true"
-            selectOptions={[0, 1, 2, 3, 4, 5]}
-            value={filter.banheiros}
-            setValue={(newValue) =>
-              setFilter({ ...filter, banheiros: newValue })
-            }
-          />
-          <Input
-            type="number"
-            label="Vagas"
-            wid="full md:150"
-            select="true"
-            selectOptions={[0, 1, 2, 3, 4, 5]}
-            value={filter.vagas}
-            setValue={(newValue) => setFilter({ ...filter, vagas: newValue })}
-          />
-        </div>
+
+        {/* Quartos, banheiros, vagas */}
+        {!admin && (
+          <>
+            <hr className="my-2 text-gray-300" />
+            <div className="flex flex-wrap gap-4">
+              <Input
+                type="text"
+                label="Quartos"
+                wid="full md:150"
+                select="true"
+                selectOptions={["0", "1", "2", "3", "4", "+5"]}
+                value={filter.quartos}
+                setValue={(newValue) =>
+                  setFilter({ ...filter, quartos: newValue })
+                }
+              />
+              <Input
+                type="text"
+                label="Banheiros"
+                wid="full md:150"
+                select="true"
+                selectOptions={["0", "1", "2", "3", "4", "+5"]}
+                value={filter.banheiros}
+                setValue={(newValue) =>
+                  setFilter({ ...filter, banheiros: newValue })
+                }
+              />
+              <Input
+                type="text"
+                label="Vagas"
+                wid="full md:150"
+                select="true"
+                selectOptions={["0", "1", "2", "3", "4", "+5"]}
+                value={filter.vagas}
+                setValue={(newValue) =>
+                  setFilter({ ...filter, vagas: newValue })
+                }
+              />
+            </div>
+          </>
+        )}
+
+        {/* Botão */}
         <Button
           label="Aplicar Filtros"
           wid="full"
