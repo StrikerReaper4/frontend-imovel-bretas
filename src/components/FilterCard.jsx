@@ -77,8 +77,11 @@ function FilterCard({ admin, onFilter }) {
     };
     const fetchFilters = async () => {
       const imoveis = await filterImoveis(numericFilter);
+      if (imoveis.length === 0) {
+        alert("Nenhum imóvel encontrado.");
+        return;
+      };
       onFilter(imoveis);
-      if (imoveis.length === 0) alert("Nenhum imóvel encontrado.");
     };
     fetchFilters();
   };
