@@ -22,7 +22,6 @@ function PropertySelected() {
     <FaCarAlt size={55} className="inline-block ml-2" />,
   ];
 
-  // 🔹 Buscar imóveis
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -35,7 +34,6 @@ function PropertySelected() {
     fetchProperties();
   }, []);
 
-  // 🔹 Achar imóvel pelo ID
   useEffect(() => {
     if (properties.length > 0) {
       const found = properties.find(
@@ -45,17 +43,15 @@ function PropertySelected() {
     }
   }, [properties, propertyId]);
 
-  // 🔹 Scroll ao topo
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // 🔹 Troca automática de imagem
   useEffect(() => {
-    if (!property?.imagens || property.imagens.length <= 1) return;
+    if (!property?.imagem || property.imagem.length <= 1) return;
     const intervalo = setInterval(() => {
       setImageSelected((prev) =>
-        prev === property.imagens.length - 1 ? 0 : prev + 1
+        prev === property.imagem.length - 1 ? 0 : prev + 1
       );
     }, 5000);
     return () => clearInterval(intervalo);
@@ -63,14 +59,12 @@ function PropertySelected() {
 
   if (!property) return <Loading />;
 
-  // 🔹 Tratamento das imagens
   let imagens = [];
-  if (property.imagens && Array.isArray(property.imagens)) {
-    imagens = property.imagens.map((img) => `data:image/jpeg;base64,${img}`);
+  if (property.imagem && Array.isArray(property.imagem)) {
+    imagens = property.imagem.map((img) => `data:image/jpeg;base64,${img}`);
   } else if (property.imagem) {
     imagens = [`data:image/jpeg;base64,${property.imagem}`];
   } else {
-    // nenhuma imagem
     imagens = ["/placeholder_house.jpg"];
   }
 
