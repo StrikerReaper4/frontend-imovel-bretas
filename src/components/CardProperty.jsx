@@ -54,7 +54,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
 
   return (
-    <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left max-w-[350px] mb-4">
+    <div className="bg-white min-h-[400px] rounded-xl p-4 shadow-md text-left w-[360px] mb-4">
       <img
         src={imageSrc}
         alt="Imagem do imóvel"
@@ -73,7 +73,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
       </span>
       <FaMapMarkerAlt size={25} className="inline-block" />
    <h2
-    className="inline-block font-bold text-xl align-middle truncate w-[80%]"
+    className="inline-block font-bold text-xl align-middle truncate w-[90%]"
     title={address} // mostra tooltip completo ao passar o mouse
   >
     {address}
