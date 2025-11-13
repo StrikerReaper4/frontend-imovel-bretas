@@ -53,7 +53,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
 
 
       {admin && (
-        <span className="text-[#9c894a] font-extrabold text-sm -mt-3 block">
+        <span className="text-[#9c894a] font-extrabold text-sm mt-1 block">
           Id: {property?.ind}
         </span>
       )}
