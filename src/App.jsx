@@ -1,19 +1,16 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-//? Pages Imports
-import Home from './pages/Home';
-import AboutUs from './pages/AboutUs';
-import AdminPage from './pages/AdminPage';
-import LoginPage from './pages/LoginPage';
-import PropertySelected from './pages/PropertySelected';
-//?
-
+import Home from './pages/Home'
+import AboutUs from './pages/AboutUs'
+import AdminPage from './pages/AdminPage'
+import LoginPage from './pages/LoginPage'
+import PropertySelected from './pages/PropertySelected'
+import GoogleTranslate from "./GoogleTranslate"
 import './App.css'
-
 
 function App() {
   return (
     <BrowserRouter>
+      <GoogleTranslate />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
