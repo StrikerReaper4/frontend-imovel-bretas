@@ -331,7 +331,7 @@ function EditProperty({ functions, property }) {
           type="text"
           label="País"
           select={true}
-          selectOptions={["Brasil", "Estados Unidos", "Portugal"]}
+          selectOptions={["Qualquer","Brasil", "Estados Unidos", "Portugal"]}
           value={property.pais}
           setValue={(v) =>
             functions.change({
