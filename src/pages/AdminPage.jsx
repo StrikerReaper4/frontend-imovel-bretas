@@ -155,7 +155,7 @@ function AdminPage() {
       bairro: String(property.bairro),
       cidade: String(property.cidade),
       estado: String(property.estado),
-      pais: String(property.pais),
+      pais:  (pais === "Qualquer") ? "" : String(property.pais),
       area: sanitizeNumber(property.area),
       quartos: sanitizeNumber(property.quartos),
       banheiros: sanitizeNumber(property.banheiros),
