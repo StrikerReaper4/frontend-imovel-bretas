@@ -1,11 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import AboutUs from './pages/AboutUs'
-import AdminPage from './pages/AdminPage'
-import LoginPage from './pages/LoginPage'
-import PropertySelected from './pages/PropertySelected'
-import GoogleTranslate from "./GoogleTranslate"
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import AboutUs from "./pages/AboutUs";
+import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
+import PropertySelected from "./pages/PropertySelected";
+import GoogleTranslate from "./components/GoogleTranslate";
+import "./App.css";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/admin/logged" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
