@@ -155,7 +155,7 @@ function AdminPage() {
       bairro: String(property.bairro),
       cidade: String(property.cidade),
       estado: String(property.estado),
-      pais:  (pais === "Qualquer") ? "" : String(property.pais),
+      pais: property.pais === "Qualquer" ? "" : String(property.pais),
       area: sanitizeNumber(property.area),
       quartos: sanitizeNumber(property.quartos),
       banheiros: sanitizeNumber(property.banheiros),
@@ -331,7 +331,7 @@ function EditProperty({ functions, property }) {
           type="text"
           label="País"
           select={true}
-          selectOptions={["Qualquer","Brasil", "Estados Unidos", "Portugal"]}
+          selectOptions={["Qualquer", "Brasil", "Estados Unidos", "Portugal"]}
           value={property.pais}
           setValue={(v) =>
             functions.change({
