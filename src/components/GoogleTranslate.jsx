@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 export default function GoogleTranslate() {
   useEffect(() => {
-    // Evita criar múltiplos scripts ao navegar
     if (window.googleTranslateElementInit) return;
 
     window.googleTranslateElementInit = () => {

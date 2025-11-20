@@ -64,7 +64,6 @@ function FilterCard({ admin, onFilter }) {
     e.preventDefault();
     const cleanedFilter = { ...filter };
 
-    // Corrige o caso do "+5" vindo de select
     if (cleanedFilter.quartos === "+5") cleanedFilter.quartos = 5;
     if (cleanedFilter.banheiros === "+5") cleanedFilter.banheiros = 5;
     if (cleanedFilter.vagas === "+5") cleanedFilter.vagas = 5;
@@ -103,7 +102,6 @@ function FilterCard({ admin, onFilter }) {
     <div className="bg-white w-full rounded-lg p-4 shadow-md text-center">
       <h2 className="title text-3xl mb-4">Filtragem</h2>
       <form>
-        {/* Filtro de ID - apenas admin */}
         {admin && (
           <>
             <div className="flex flex-wrap gap-4">
@@ -122,7 +120,6 @@ function FilterCard({ admin, onFilter }) {
           </>
         )}
 
-        {/* Filtro tipo - usuários */}
         {!admin && (
           <>
             <div className="flex flex-wrap gap-4">
@@ -142,7 +139,6 @@ function FilterCard({ admin, onFilter }) {
           </>
         )}
 
-        {/* País, Estado, Cidade, Bairro */}
         <div className="flex flex-wrap gap-4">
           <Input
             type="text"
@@ -194,7 +190,6 @@ function FilterCard({ admin, onFilter }) {
 
         <hr className="my-2 text-gray-300" />
 
-        {/* Valores */}
         <div className="flex flex-wrap gap-4">
           <Input
             type="number"
@@ -214,7 +209,6 @@ function FilterCard({ admin, onFilter }) {
           />
         </div>
 
-        {/* Quartos, banheiros, vagas */}
         {!admin && (
           <>
             <hr className="my-2 text-gray-300" />
@@ -256,7 +250,6 @@ function FilterCard({ admin, onFilter }) {
           </>
         )}
 
-        {/* Botão */}
         <Button
           label="Aplicar Filtros"
           wid="full"

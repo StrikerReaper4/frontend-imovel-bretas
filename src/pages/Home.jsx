@@ -15,7 +15,7 @@ import Loading from "../components/Loading";
 function Home() {
   const [showExtra, setShowExtra] = useState(false);
   const [properties, setProperties] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // 👈 controle de carregamento
+  const [isLoading, setIsLoading] = useState(true);
 
   const recieveFilterProperties = (items) => {
     console.log("Recebendo filtro", items);
@@ -28,7 +28,6 @@ function Home() {
         setIsLoading(true);
         const data = await getImoveis();
 
-        // 🔒 Garante que o resultado sempre seja um array
         if (Array.isArray(data)) {
           setProperties(data);
         } else if (data && typeof data === "object") {
@@ -38,7 +37,7 @@ function Home() {
         }
       } catch (err) {
         console.error("Erro ao pegar imóveis:", err);
-        setProperties([]); // evita travar o loading se a API falhar
+        setProperties([]);
       } finally {
         setIsLoading(false);
       }
@@ -46,7 +45,6 @@ function Home() {
     fetchProperties();
   }, []);
 
-  // Exibe o botão "Voltar aos Filtros" após rolar 500px
   const handleScroll = () => {
     const position = window.scrollY;
     setShowExtra(position > 500);
@@ -61,7 +59,6 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Função para rolar até o filtro
   const scrollToFilters = () => {
     setShowExtra(false);
     window.scrollTo({
@@ -70,7 +67,6 @@ function Home() {
     });
   };
 
-  // 👇 Estados de renderização com segurança
   if (isLoading) return <Loading />;
 
   if (!isLoading && properties.length === 0)

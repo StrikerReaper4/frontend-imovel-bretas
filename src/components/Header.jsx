@@ -4,20 +4,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SiGmail } from "react-icons/si";
 import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
-import { useTheme } from "next-themes";
 
 export default function Header({ admin }) {
   const navigate = useNavigate();
   const location = useLocation();
-  //const [atualTheme, setAtualTheme] = useState(localStorage.getItem("theme"));
   const [menuStatus, setMenuStatus] = useState(false);
-
-  /*const changeTheme = () => {
-    alert("Trocando tema:"+atualTheme);
-    const opositeTheme = atualTheme === "dark" ? "light" : "dark";
-    localStorage.setItem("theme", opositeTheme);
-    setAtualTheme(opositeTheme);
-  };*/
 
   const redirectTo = (url) => {
     window.open(url, "_blank", "noopener noreferrer");
@@ -100,13 +91,6 @@ export default function Header({ admin }) {
                   className="w-[50px] h-[50px] rounded-[100%]"
                   alt="Bandeira do Reino Unido"
                 />
-                {/*<button id="trade-theme"  onClick={() => changeTheme()} className="bg-white text-[#0f3e58] w-[50px] h-[50px] font-bold rounded-full  hover:bg-[#e3c668] hover:text-white transition-colors duration-300 place-items-center cursor-pointer">
-              {atualTheme === "dark" ? (
-                <FaSun size={30} />
-              ) : (
-                <FaMoon size={30} />
-              )}            
-            </button>*/}
               </div>
 
               <div className="flex justify-end mr-10 mb-2">

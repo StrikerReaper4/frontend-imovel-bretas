@@ -6,20 +6,14 @@ export const Login = async (login) => {
 
     const data = response.data;
 
-    // 💾 Verifica o formato retornado pelo backend
-    // Caso venha como { pessoa: {...}, token: "..." }
     if (data.pessoa && data.token) {
       localStorage.setItem("user", JSON.stringify(data.pessoa));
       localStorage.setItem("token", data.token);
-      console.log("✅ Usuário salvo:", data.pessoa);
-    }
-    // Caso venha tudo no mesmo objeto { id, nome, token }
-    else {
+    } else {
       localStorage.setItem("user", JSON.stringify(data));
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-      console.log("✅ Usuário salvo:", data);
     }
 
     return response;

@@ -1,8 +1,5 @@
 import api from "./api";
 
-// ==========================================
-// ✅ Converte qualquer objeto em FormData
-// ==========================================
 const toFormData = (obj) => {
   const formData = new FormData();
 
@@ -11,7 +8,6 @@ const toFormData = (obj) => {
 
     if (Array.isArray(value)) {
       value.forEach((item) => {
-        // ✅ Corrigido: SEM usar "[]"
         formData.append(key, item);
       });
     } else if (value instanceof File || value instanceof Blob) {
@@ -26,9 +22,6 @@ const toFormData = (obj) => {
   return formData;
 };
 
-// ==========================================
-// ✅ Pega todos os imóveis
-// ==========================================
 export const getImoveis = async () => {
   try {
     const response = await api.post("/filtrar/imoveis", {});
@@ -42,9 +35,6 @@ export const getImoveis = async () => {
   }
 };
 
-// ==========================================
-// ✅ Filtra imóveis
-// ==========================================
 export const filterImoveis = async (filtro) => {
   try {
     const response = await api.post("/filtrar/imoveis", filtro);
@@ -58,18 +48,12 @@ export const filterImoveis = async (filtro) => {
   }
 };
 
-// ==========================================
-// ✅ Cria imóvel (com suporte a múltiplas imagens)
-// ==========================================
 export const createImovel = async (imovel) => {
   try {
     const saved = JSON.parse(localStorage.getItem("user"));
     const user = saved?.user;
     if (user?.id) {
       imovel.id_pessoa = user.id;
-      console.log("✅ ID do usuário adicionado ao imóvel:", user.id);
-    } else {
-      console.warn("⚠️ Nenhum usuário logado encontrado. id_pessoa ausente.");
     }
 
     if (imovel.imagens && imovel.imagens.length > 0) {
@@ -85,9 +69,6 @@ export const createImovel = async (imovel) => {
   }
 };
 
-// ==========================================
-// ✅ Deleta imóvel
-// ==========================================
 export const deleteImovel = async (id) => {
   try {
     const response = await api.post("/deletar/imovel", {
@@ -100,9 +81,6 @@ export const deleteImovel = async (id) => {
   }
 };
 
-// ==========================================
-// ✅ Atualiza imóvel (também suporta múltiplas imagens)
-// ==========================================
 export const updateImovel = async (imovel) => {
   try {
     if (!imovel.id && !imovel.id_imovel) {

@@ -30,7 +30,6 @@ function AdminPage() {
   }
 
   const recieveFilterProperties = (items) => {
-    console.log("Recebendo filtro", items);
     setProperties(items);
   };
 
@@ -45,7 +44,6 @@ function AdminPage() {
         navigate("/admin");
       }
     } catch (error) {
-      console.log(error);
       navigate("/admin");
     }
 
@@ -81,14 +79,12 @@ function AdminPage() {
           ind: Number(p.ind),
         }));
         setProperties(normalized);
-        console.log(normalized);
       } catch (err) {
-        console.error("Erro ao pegar imóveis:", err);
+        console.error(err);
       }
     };
     fetchProperties();
   }, []);
-
   const deletePropertyFunction = () => {
     try {
       const handleDelete = async () => {
@@ -108,7 +104,6 @@ function AdminPage() {
 
   const editPropertyFunction = () => {
     if (!selectedProperty) {
-      console.error("Nenhum imóvel selecionado para edição.");
       return;
     }
 
@@ -144,7 +139,7 @@ function AdminPage() {
       };
       handleEdit();
     } catch (err) {
-      console.error("Erro ao editar imóvel:", err);
+      console.error(err);
     }
   };
 
@@ -155,7 +150,7 @@ function AdminPage() {
       bairro: String(property.bairro),
       cidade: String(property.cidade),
       estado: String(property.estado),
-      pais: property.pais === "Qualquer" ? "" : String(property.pais),
+      pais: property.pais === "" ? "" : String(property.pais),
       area: sanitizeNumber(property.area),
       quartos: sanitizeNumber(property.quartos),
       banheiros: sanitizeNumber(property.banheiros),
@@ -166,21 +161,17 @@ function AdminPage() {
       tipo: property.tipo || "Casa",
       descricao: String(property.descricao),
       imagem: property.imagem || [],
-      //imagem_type
     };
 
     try {
       const handleCreate = async () => {
         await createImovel(propertyToSend);
-        console.log(propertyToSend);
         alert("Novo imóvel adicionado.");
         closeModal();
         window.location.reload();
       };
       handleCreate();
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   const openModal = useCallback(
@@ -192,7 +183,6 @@ function AdminPage() {
       setSelectedProperty(selectProperty);
       setModalType(type);
       setPropertyId(numericId);
-      console.log(selectedProperty);
     },
     [properties]
   );
@@ -204,10 +194,10 @@ function AdminPage() {
   }, []);
 
   if (properties.length === 0) return <Loading />;
-
   return (
     <>
       <Header admin={true} />
+
       {modalType === "edit" && (
         <Modal
           propertyId={propertyId}
@@ -276,8 +266,6 @@ function AdminPage() {
     </>
   );
 }
-
-// ✅ EditProperty agora com rolagem e todos os campos
 function EditProperty({ functions, property }) {
   const [estados, setEstados] = useState([]);
   const [cidades, setCidades] = useState(["Qualquer"]);
@@ -294,7 +282,7 @@ function EditProperty({ functions, property }) {
           .sort((a, b) => a.localeCompare(b));
         setEstados(["Qualquer", ...listaEstados]);
       } catch (err) {
-        console.error("Erro ao buscar estados:", err);
+        console.error(err);
       }
     };
     buscarEstados();
@@ -316,7 +304,7 @@ function EditProperty({ functions, property }) {
           .sort((a, b) => a.localeCompare(b));
         setCidades(["Qualquer", ...listaCidades]);
       } catch (e) {
-        console.error("Erro ao buscar cidades");
+        console.error(e);
       }
     };
     buscarCidades();
