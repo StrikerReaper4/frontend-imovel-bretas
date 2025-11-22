@@ -4,13 +4,13 @@ import AboutUs from "./pages/AboutUs";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import PropertySelected from "./pages/PropertySelected";
-import GoogleTranslate from "./components/GoogleTranslate";
+//import GoogleTranslate from "./components/GoogleTranslate";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <GoogleTranslate />
+      {/*<GoogleTranslate />*/}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
