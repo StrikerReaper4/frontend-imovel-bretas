@@ -7,7 +7,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
   const navigate = useNavigate();
 
   const redirectToWhatsapp = () => {
-    const phoneNumber = "556784121913";
+    const phoneNumber = "5567992609967";
     const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
     const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ID ${property?.ind}`;
     window.open(
