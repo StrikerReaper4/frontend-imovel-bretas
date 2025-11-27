@@ -80,7 +80,7 @@ function PropertySelected() {
   }
 
   const imageUrl = imagens[imageSelected];
-  const address = `${property.rua}, ${property.numero} - ${property.bairro}, ${property.cidade} / ${property.estado}`;
+  const address = `${property.rua}, ${property.bairro} ${property.cidade} ${property.estado}`;
 
   const redirectToWhatsapp = () => {
     const phoneNumber = "556784121913";
