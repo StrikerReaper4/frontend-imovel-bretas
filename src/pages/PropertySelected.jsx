@@ -83,7 +83,7 @@ function PropertySelected() {
   const address = `${property.rua}, ${property.bairro} ${property.cidade} ${property.estado}`;
 
   const redirectToWhatsapp = () => {
-    const phoneNumber = "556784121913";
+    const phoneNumber = "5567992609967";
     const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${address} e do ID ${property.ind}`;
     window.open(
       `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
