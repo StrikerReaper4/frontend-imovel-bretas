@@ -54,7 +54,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
     imageUrl = `data:image/jpeg;base64,${property.imagem}`;
   }
 
-  const address = `${property?.rua}, ${property?.numero} - ${property?.bairro}, ${property?.cidade} / ${property?.estado}`;
+  const address = `${property?.rua}, ${property?.bairro} ${property?.cidade} ${property?.estado}`;
 
   return (
     <div className="bg-white min-h-[400px] rounded-xl p-4 shadow-md text-left w-[360px] mb-4">
