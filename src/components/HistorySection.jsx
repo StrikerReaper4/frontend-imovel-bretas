@@ -7,7 +7,7 @@ function HistorySection() {
       <div className="w-full md:w-1/2 flex justify-center mb-6 md:mb-0">
         <img
           src={nossaHistoria} // <- Coloque aqui o caminho da sua imagem
-          alt="Nossa História"
+          alt="|Nossa História|"
           className="rounded-lg w-80 h-60 md:w-96 md:h-72 object-cover"
         />
       </div>
