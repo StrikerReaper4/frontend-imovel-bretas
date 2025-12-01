@@ -17,6 +17,13 @@ export default function CardProperty({ property, admin, handleOpen }) {
     );
   };
 
+  function getCurrencySymbol(country) {
+    if (country === "Brasil") return "R$";
+    if (country === "Estados Unidos") return "U$";
+    if (country === "Portugal") return "€";
+    return "";
+  }
+
   let imageSrc = "/placeholder_house.jpg";
 
   if (Array.isArray(property.imagem) && property.imagem.length > 0) {
@@ -102,10 +109,8 @@ export default function CardProperty({ property, admin, handleOpen }) {
       </div>
 
       <p className="text-xl title font-bold text-left mt-2">
-        {property?.valor.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        })}
+        {getCurrencySymbol(property?.pais)}{" "}
+        {property?.valor?.toLocaleString()}
       </p>
 
       {admin ? (
