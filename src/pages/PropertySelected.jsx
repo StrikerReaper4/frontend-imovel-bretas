@@ -13,6 +13,12 @@ function PropertySelected() {
   const propertyId = location.pathname.split("/property/")[1];
   const intervalRef = useRef(null);
 
+  function getCurrencySymbol(country) {
+    if (country === "Brasil") return "R$";
+    if (country === "Estados Unidos") return "U$";
+    if (country === "Portugal") return "€";
+    return "";
+  }
 
   const [imageSelected, setImageSelected] = useState(0);
   const [properties, setProperties] = useState([]);
@@ -29,18 +35,18 @@ function PropertySelected() {
       try {
         const data = await getImoveis();
         setProperties(data);
-      } catch (err) {
-        console.error("Erro ao pegar imóveis:", err);
-      }
+      } catch (err) {}
     };
     fetchProperties();
   }, []);
+
   const stopImageChange = () => {
-      if (intervalRef.current) {
+    if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  }
+  };
+
   useEffect(() => {
     if (properties.length > 0) {
       const found = properties.find(
@@ -53,7 +59,6 @@ function PropertySelected() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
 
   useEffect(() => {
     if (!property?.imagem || property.imagem.length <= 1) return;
@@ -115,7 +120,9 @@ function PropertySelected() {
                 className="w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover cursor-pointer"
                 alt="Imagem do imóvel"
                 title="Clique para pausar a troca"
-                onClick={()=>{stopImageChange()}}
+                onClick={() => {
+                  stopImageChange();
+                }}
               />
 
               <div
@@ -151,10 +158,8 @@ function PropertySelected() {
               Endereço: {address}
             </p>
             <p className="text-3xl sm:text-4xl text-[#efd16e] font-extrabold mb-2">
-              {property.valor?.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }) || "R$ 0,00"}
+              {getCurrencySymbol(property?.pais)}{" "}
+              {property.valor?.toLocaleString() || "0,00"}
             </p>
             <p className="text-base sm:text-lg mt-2">
               <strong>Descrição:</strong>{" "}
