@@ -13,11 +13,20 @@ function PropertySelected() {
   const propertyId = location.pathname.split("/property/")[1];
   const intervalRef = useRef(null);
 
-  function getCurrencySymbol(country) {
-    if (country === "Brasil") return "R$";
-    if (country === "Estados Unidos") return "U$";
-    if (country === "Portugal") return "€";
-    return "";
+  function formatPrice(valor, pais) {
+    const num = Number(valor) || 0;
+    if (pais === "Brasil") {
+      return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+    if (pais === "Estados Unidos") {
+      return num
+        .toLocaleString("en-US", { style: "currency", currency: "USD" })
+        .replace("$", "U$ ");
+    }
+    if (pais === "Portugal") {
+      return num.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
+    }
+    return num.toLocaleString();
   }
 
   const [imageSelected, setImageSelected] = useState(0);
@@ -158,8 +167,7 @@ function PropertySelected() {
               Endereço: {address}
             </p>
             <p className="text-3xl sm:text-4xl text-[#efd16e] font-extrabold mb-2">
-              {getCurrencySymbol(property?.pais)}{" "}
-              {property.valor?.toLocaleString() || "0,00"}
+              {formatPrice(property?.valor, property?.pais)}
             </p>
             <p className="text-base sm:text-lg mt-2">
               <strong>Descrição:</strong>{" "}
