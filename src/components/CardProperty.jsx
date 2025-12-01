@@ -17,11 +17,20 @@ export default function CardProperty({ property, admin, handleOpen }) {
     );
   };
 
-  function getCurrencySymbol(country) {
-    if (country === "Brasil") return "R$";
-    if (country === "Estados Unidos") return "U$";
-    if (country === "Portugal") return "€";
-    return "";
+  function formatPrice(valor, pais) {
+    const num = Number(valor) || 0;
+    if (pais === "Brasil") {
+      return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+    if (pais === "Estados Unidos") {
+      return num
+        .toLocaleString("en-US", { style: "currency", currency: "USD" })
+        .replace("$", "U$ ");
+    }
+    if (pais === "Portugal") {
+      return num.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
+    }
+    return num.toLocaleString();
   }
 
   let imageSrc = "/placeholder_house.jpg";
@@ -109,8 +118,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
       </div>
 
       <p className="text-xl title font-bold text-left mt-2">
-        {getCurrencySymbol(property?.pais)}{" "}
-        {property?.valor?.toLocaleString()}
+        {formatPrice(property?.valor, property?.pais)}
       </p>
 
       {admin ? (
