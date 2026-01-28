@@ -98,7 +98,7 @@ export default function Footer() {
       />
       {/* Copyright */}
       <div className="text-center text-sm mt-6 border-t border-gray-300 pt-4">
-        © 2025 Bretas Imóveis – Todos direitos reservados
+        ©Bretas Imóveis – Todos direitos reservados
       </div>
     </footer>
   );
