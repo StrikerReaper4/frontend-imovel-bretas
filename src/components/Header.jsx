@@ -95,7 +95,7 @@ export default function Header({ admin }) {
 
               <div className="flex justify-end mr-10 mb-2">
                 <h3 className="text-white font-bold">
-                  © 2025 - Bretas Imóveis
+                  ©Bretas Imóveis
                 </h3>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function Header({ admin }) {
                 </div>
 
                 <div className="mt-6 text-sm text-[#0f3e58] font-semibold">
-                  © 2025 - Bretas Imóveis
+                  ©Bretas Imóveis
                 </div>
               </div>
             )}
