@@ -22,9 +22,10 @@ const toFormData = (obj) => {
   return formData;
 };
 
-export const getImoveis = async () => {
+// page começa em 1, limit define quantos imóveis por vez
+export const getImoveis = async (page = 1, limit = 20) => {
   try {
-    const response = await api.post("/filtrar/imoveis", {});
+    const response = await api.post("/filtrar/imoveis", { page, limit });
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
@@ -35,9 +36,10 @@ export const getImoveis = async () => {
   }
 };
 
-export const filterImoveis = async (filtro) => {
+// filtro + paginação — o backend cuida do LIMIT/OFFSET
+export const filterImoveis = async (filtro, page = 1, limit = 20) => {
   try {
-    const response = await api.post("/filtrar/imoveis", filtro);
+    const response = await api.post("/filtrar/imoveis", { ...filtro, page, limit });
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];

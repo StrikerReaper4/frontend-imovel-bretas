@@ -57,6 +57,7 @@ export default function CardProperty({ property, admin, handleOpen }) {
         : `data:image/jpeg;base64,${firstImage}`;
     }
   }
+
   if (admin === undefined) admin = false;
 
   let imageUrl = "/placeholder_house.jpg";
@@ -74,10 +75,13 @@ export default function CardProperty({ property, admin, handleOpen }) {
 
   return (
     <div className="bg-white min-h-[400px] rounded-xl p-4 shadow-md text-left w-[360px] mb-4">
+      {/* loading="lazy" e decoding="async" evitam processar todas as imagens de uma vez */}
       <img
         src={imageSrc}
         alt="Imagem do imóvel"
         className="w-full h-[170px] object-cover rounded-lg"
+        loading="lazy"
+        decoding="async"
       />
 
       {admin && (
