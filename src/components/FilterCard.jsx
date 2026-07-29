@@ -1,7 +1,10 @@
 import Input from "./Input";
 import Button from "./Button";
-import { filterImoveis } from "../services/imovelService";
 import { useState, useEffect } from "react";
+
+// FilterCard agora NÃO busca os imóveis diretamente.
+// Ele monta o objeto de filtro e passa para o Home via onFilter.
+// O Home é responsável por buscar a primeira página e paginar.
 
 function FilterCard({ admin, onFilter }) {
   const [estados, setEstados] = useState([]);
@@ -82,20 +85,8 @@ function FilterCard({ admin, onFilter }) {
       ate: Number(cleanedFilter.ate) || 0,
     };
 
-    const fetchFilters = async () => {
-      try {
-        const imoveis = await filterImoveis(numericFilter);
-        if (!imoveis || imoveis.length === 0) {
-          alert("Nenhum imóvel encontrado.");
-          return;
-        }
-        onFilter(imoveis);
-      } catch (error) {
-        console.error("Erro ao filtrar imóveis:", error);
-      }
-    };
-
-    fetchFilters();
+    // Passa o OBJETO DE FILTRO para o Home — ele busca a página 1 e pagina
+    onFilter(numericFilter);
   };
 
   return (
