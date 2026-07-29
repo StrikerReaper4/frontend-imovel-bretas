@@ -73,6 +73,14 @@ function PropertySelected() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  // Ao sair da página (unmount), sinaliza para Home que o usuário veio de um detalhe.
+  // Assim, ao pressionar "voltar", Home restaura filtros + scroll em vez de recarregar do zero.
+  useEffect(() => {
+    return () => {
+      sessionStorage.setItem("cameFromDetail", "true");
+    };
+  }, []);
+
   useEffect(() => {
     if (!property?.imagem || property.imagem.length <= 1) return;
     if (intervalRef.current) clearInterval(intervalRef.current);
