@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { ThemeProvider } from 'next-themes'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/*<ThemeProvider attribute="data-theme">*/}
