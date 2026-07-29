@@ -2,9 +2,11 @@ import Input from "./Input";
 import Button from "./Button";
 import { useState, useEffect } from "react";
 
-// FilterCard agora NÃO busca os imóveis diretamente.
-// Ele monta o objeto de filtro e passa para o Home via onFilter.
-// O Home é responsável por buscar a primeira página e paginar.
+const CURRENCY_SYMBOL = {
+  Brasil: "R$",
+  "Estados Unidos": "U$",
+  Portugal: "€",
+};
 
 function FilterCard({ admin, onFilter }) {
   const [estados, setEstados] = useState([]);
@@ -24,6 +26,12 @@ function FilterCard({ admin, onFilter }) {
   });
 
   if (admin === undefined) admin = false;
+
+  // Símbolo da moeda baseado no país selecionado
+  const currencySymbol = CURRENCY_SYMBOL[filter.pais] || null;
+
+  // Preço só pode ser filtrado quando um país está selecionado
+  const priceDisabled = !filter.pais || filter.pais === "Qualquer";
 
   const buscarCidades = async () => {
     try {
@@ -63,6 +71,11 @@ function FilterCard({ admin, onFilter }) {
     else setCidades(["Qualquer"]);
   }, [filter.estado]);
 
+  // Quando o país muda, zera os campos de valor para evitar filtros inválidos
+  const handlePaisChange = (newPais) => {
+    setFilter({ ...filter, pais: newPais, estado: "", cidade: "", de: 0, ate: 0 });
+  };
+
   const handleApplyFilters = (e) => {
     e.preventDefault();
     const cleanedFilter = { ...filter };
@@ -75,6 +88,12 @@ function FilterCard({ admin, onFilter }) {
       if (cleanedFilter[key] === "Qualquer") cleanedFilter[key] = "";
     });
 
+    // Se o país foi zerado, garante que de/ate também vão zerados
+    if (!cleanedFilter.pais) {
+      cleanedFilter.de = 0;
+      cleanedFilter.ate = 0;
+    }
+
     const numericFilter = {
       ...cleanedFilter,
       id_imovel: Number(cleanedFilter.id_imovel) || 0,
@@ -85,7 +104,6 @@ function FilterCard({ admin, onFilter }) {
       ate: Number(cleanedFilter.ate) || 0,
     };
 
-    // Passa o OBJETO DE FILTRO para o Home — ele busca a página 1 e pagina
     onFilter(numericFilter);
   };
 
@@ -138,9 +156,7 @@ function FilterCard({ admin, onFilter }) {
             select="true"
             selectOptions={["Qualquer", "Brasil", "Estados Unidos", "Portugal"]}
             value={filter.pais}
-            setValue={(newValue) =>
-              setFilter({ ...filter, pais: newValue, estado: "", cidade: "" })
-            }
+            setValue={handlePaisChange}
           />
 
           {filter.pais === "Brasil" && (
@@ -181,19 +197,26 @@ function FilterCard({ admin, onFilter }) {
 
         <hr className="my-2 text-gray-300" />
 
-        <div className="flex flex-wrap gap-4">
+        {/* Aviso quando nenhum país está selecionado */}
+        {priceDisabled && (
+          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 mb-2 text-left">
+            ⚠️ Selecione um <strong>país</strong> para filtrar por valor — cada país usa uma moeda diferente.
+          </p>
+        )}
+
+        <div className={`flex flex-wrap gap-4 ${priceDisabled ? "opacity-40 pointer-events-none" : ""}`}>
           <Input
             type="number"
-            label="Valor Mínimo"
-            placeholder="R$ 1"
+            label={`Valor Mínimo${currencySymbol ? ` (${currencySymbol})` : ""}`}
+            placeholder={currencySymbol ? `${currencySymbol} 1` : "Selecione o país"}
             wid="full md:150"
             value={filter.de}
             setValue={(newValue) => setFilter({ ...filter, de: newValue })}
           />
           <Input
             type="number"
-            label="Valor Máximo"
-            placeholder="R$ 1.000.000"
+            label={`Valor Máximo${currencySymbol ? ` (${currencySymbol})` : ""}`}
+            placeholder={currencySymbol ? `${currencySymbol} 1.000.000` : "Selecione o país"}
             wid="full md:150"
             value={filter.ate}
             setValue={(newValue) => setFilter({ ...filter, ate: newValue })}

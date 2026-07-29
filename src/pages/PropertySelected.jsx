@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { FaAngleLeft, FaAngleRight, FaBath, FaCarAlt } from "react-icons/fa";
 import { IoIosBed } from "react-icons/io";
 import { useState, useEffect, useRef } from "react";
-import { getImoveis } from "../services/imovelService";
+import { filterImoveis } from "../services/imovelService";
 import Loading from "../components/Loading";
 
 function PropertySelected() {
@@ -30,8 +30,8 @@ function PropertySelected() {
   }
 
   const [imageSelected, setImageSelected] = useState(0);
-  const [properties, setProperties] = useState([]);
   const [property, setProperty] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   const icons = [
     <IoIosBed size={55} className="inline-block ml-2" />,
@@ -39,15 +39,28 @@ function PropertySelected() {
     <FaCarAlt size={55} className="inline-block ml-2" />,
   ];
 
+  // CORREÇÃO: busca o imóvel diretamente pelo ID, sem baixar todos os 20
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchById = async () => {
       try {
-        const data = await getImoveis();
-        setProperties(data);
-      } catch (err) {}
+        const id = parseInt(propertyId);
+        if (!id) { setNotFound(true); return; }
+
+        // Usa o filtro por id_imovel — retorna só 1 registro
+        const data = await filterImoveis({ id_imovel: id }, 1, 1);
+
+        if (data && data.length > 0) {
+          setProperty(data[0]);
+        } else {
+          setNotFound(true);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar imóvel:", err);
+        setNotFound(true);
+      }
     };
-    fetchProperties();
-  }, []);
+    fetchById();
+  }, [propertyId]);
 
   const stopImageChange = () => {
     if (intervalRef.current) {
@@ -55,15 +68,6 @@ function PropertySelected() {
       intervalRef.current = null;
     }
   };
-
-  useEffect(() => {
-    if (properties.length > 0) {
-      const found = properties.find(
-        (prop) => prop.ind === parseInt(propertyId)
-      );
-      setProperty(found || null);
-    }
-  }, [properties, propertyId]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -82,12 +86,35 @@ function PropertySelected() {
     };
   }, [property]);
 
+  // Imóvel não encontrado
+  if (notFound)
+    return (
+      <>
+        <Header />
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+          <h2 className="text-2xl font-semibold text-gray-600 mb-4">
+            Imóvel não encontrado
+          </h2>
+          <p className="text-gray-500 mb-8">
+            O imóvel que você procura não existe ou foi removido.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            className="bg-[#80703c] text-white py-2 px-6 rounded-full font-bold shadow-md"
+          >
+            Voltar
+          </button>
+        </div>
+        <Footer />
+      </>
+    );
+
   if (!property) return <Loading />;
 
   let imagens = [];
-  if (property.imagem && Array.isArray(property.imagem)) {
+  if (property.imagem && Array.isArray(property.imagem) && property.imagem.length > 0) {
     imagens = property.imagem.map((img) => `data:image/jpeg;base64,${img}`);
-  } else if (property.imagem) {
+  } else if (property.imagem && !Array.isArray(property.imagem)) {
     imagens = [`data:image/jpeg;base64,${property.imagem}`];
   } else {
     imagens = ["/placeholder_house.jpg"];
@@ -129,9 +156,9 @@ function PropertySelected() {
                 className="w-[500px] h-[250px] sm:h-[300px] md:h-[350px] rounded-lg object-cover cursor-pointer"
                 alt="Imagem do imóvel"
                 title="Clique para pausar a troca"
-                onClick={() => {
-                  stopImageChange();
-                }}
+                loading="lazy"
+                decoding="async"
+                onClick={stopImageChange}
               />
 
               <div
