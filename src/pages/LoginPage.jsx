@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Login } from "../services/userService";
+import { local } from "../utils/storage";
 function LoginPage() {
   const navigate = useNavigate();
   const [loginInfos, setLoginInfos] = useState({
@@ -17,15 +18,15 @@ function LoginPage() {
         const response = await Login(loginInfos);
         console.log("resposta", response);
         if (response.status === 200) {
-          localStorage.setItem("user", JSON.stringify(response.data));
+          local.setJSON("user", response.data);
           const expiryTime = Date.now() + 60 * 60 * 1000;
-          localStorage.setItem("token_expiry", expiryTime);
+          local.set("token_expiry", String(expiryTime));
           navigate("/admin/logged");
         }
       };
       handleLogin();
     } catch (error) {
-      console.error(err);
+      console.error(error);
     }
   };
   return (

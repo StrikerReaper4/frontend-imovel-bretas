@@ -6,6 +6,7 @@ import { FaAngleLeft, FaAngleRight, FaBath, FaCarAlt } from "react-icons/fa";
 import { IoIosBed } from "react-icons/io";
 import { useState, useEffect, useRef } from "react";
 import { filterImoveis } from "../services/imovelService";
+import { session } from "../utils/storage";
 import Loading from "../components/Loading";
 
 function PropertySelected() {
@@ -77,7 +78,7 @@ function PropertySelected() {
   // Assim, ao pressionar "voltar", Home restaura filtros + scroll em vez de recarregar do zero.
   useEffect(() => {
     return () => {
-      sessionStorage.setItem("cameFromDetail", "true");
+      session.set("cameFromDetail", "true");
     };
   }, []);
 

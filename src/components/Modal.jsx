@@ -1,7 +1,6 @@
 import { MdClose } from "react-icons/md"
-import { useState } from "react"
 
-export default function Modal ({ propertyId,title,data, onClose }) {
+export default function Modal ({ title, data, onClose }) {
 
     const handleClose = (e) => {
         if (e.target === e.currentTarget) {

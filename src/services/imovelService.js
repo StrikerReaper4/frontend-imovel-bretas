@@ -1,4 +1,20 @@
 import api from "./api";
+import { local } from "../utils/storage";
+
+// Normaliza a resposta do /filtrar/imoveis, que pode vir em dois formatos:
+// array puro (padrão antigo) ou { items, total } (quando with_total é pedido).
+const normalizeList = (data) => {
+  if (Array.isArray(data)) {
+    return { items: data, total: null };
+  }
+  if (data && Array.isArray(data.items)) {
+    return { items: data.items, total: Number(data.total) || 0 };
+  }
+  if (data && typeof data === "object") {
+    return { items: [data], total: null };
+  }
+  return { items: [], total: null };
+};
 
 const toFormData = (obj) => {
   const formData = new FormData();
@@ -20,6 +36,24 @@ const toFormData = (obj) => {
   }
 
   return formData;
+};
+
+// Listagem da Home: pede só a PRIMEIRA imagem de cada imóvel (thumb) e o total
+// de resultados. Devolve { items, total } — total é null se a API for antiga.
+export const listImoveis = async (filtro = null, page = 1, limit = 12) => {
+  try {
+    const response = await api.post("/filtrar/imoveis", {
+      ...(filtro || {}),
+      page,
+      limit,
+      thumb: true,
+      with_total: true,
+    });
+    return normalizeList(response?.data);
+  } catch (error) {
+    console.error("Erro ao listar imóveis:", error);
+    throw error;
+  }
 };
 
 // page começa em 1, limit define quantos imóveis por vez
@@ -52,7 +86,7 @@ export const filterImoveis = async (filtro, page = 1, limit = 20) => {
 
 export const createImovel = async (imovel) => {
   try {
-    const saved = JSON.parse(localStorage.getItem("user"));
+    const saved = local.getJSON("user");
     const user = saved?.user;
     if (user?.id) {
       imovel.id_pessoa = user.id;
