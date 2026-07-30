@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SiGmail } from "react-icons/si";
 import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
+import { local } from "../utils/storage";
 
 export default function Header({ admin }) {
   const navigate = useNavigate();
@@ -217,7 +218,8 @@ export default function Header({ admin }) {
             <div
               className="flex justify-end mr-8 mb-2 gap-1 cursor-pointer align-middle"
               onClick={() => {
-                localStorage.setItem("token", "");
+                local.remove("token");
+                local.remove("token_expiry");
                 navigate("/");
               }}
             >

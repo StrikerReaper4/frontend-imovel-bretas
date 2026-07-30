@@ -6,10 +6,12 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getImoveis,
+  filterImoveis,
   deleteImovel,
   createImovel,
   updateImovel,
 } from "../services/imovelService";
+import { local } from "../utils/storage";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import Button from "../components/Button";
@@ -29,21 +31,29 @@ function AdminPage() {
     return clean === "" ? 0 : Number(clean);
   }
 
-  const recieveFilterProperties = (items) => {
-    setProperties(items);
+  // O FilterCard entrega o objeto de filtro, não a lista de imóveis — é preciso
+  // consultar a API. Antes o filtro era gravado direto em `properties`, o que
+  // quebrava a tela no primeiro `properties.find`.
+  const recieveFilterProperties = async (filtro) => {
+    try {
+      const data = await filterImoveis(filtro, 1, 200);
+      setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
+    } catch (err) {
+      console.error("Erro ao filtrar imóveis:", err);
+    }
   };
 
   useEffect(() => {
     try {
-      const token = localStorage.getItem("token");
-      const expiry = localStorage.getItem("token_expiry");
+      const token = local.get("token");
+      const expiry = Number(local.get("token_expiry"));
 
-      if (!token || Date.now() > expiry) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("token_expiry");
+      if (!token || !expiry || Date.now() > expiry) {
+        local.remove("token");
+        local.remove("token_expiry");
         navigate("/admin");
       }
-    } catch (error) {
+    } catch {
       navigate("/admin");
     }
 
@@ -171,7 +181,9 @@ function AdminPage() {
         window.location.reload();
       };
       handleCreate();
-    } catch (err) {}
+    } catch (err) {
+      console.error("Erro ao adicionar imóvel:", err);
+    }
   };
 
   const openModal = useCallback(

@@ -60,17 +60,6 @@ export default function CardProperty({ property, admin, handleOpen }) {
 
   if (admin === undefined) admin = false;
 
-  let imageUrl = "/placeholder_house.jpg";
-  if (
-    property?.imagens &&
-    Array.isArray(property.imagens) &&
-    property.imagens.length > 0
-  ) {
-    imageUrl = `data:image/jpeg;base64,${property.imagens[0]}`;
-  } else if (property?.imagem) {
-    imageUrl = `data:image/jpeg;base64,${property.imagem}`;
-  }
-
   const address = `${property?.rua}, ${property?.bairro} ${property?.cidade} ${property?.estado}`;
 
   return (

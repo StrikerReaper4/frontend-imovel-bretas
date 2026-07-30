@@ -1,4 +1,5 @@
 import api from "./api";
+import { local } from "../utils/storage";
 
 export const Login = async (login) => {
   try {
@@ -7,12 +8,12 @@ export const Login = async (login) => {
     const data = response.data;
 
     if (data.pessoa && data.token) {
-      localStorage.setItem("user", JSON.stringify(data.pessoa));
-      localStorage.setItem("token", data.token);
+      local.setJSON("user", data.pessoa);
+      local.set("token", data.token);
     } else {
-      localStorage.setItem("user", JSON.stringify(data));
+      local.setJSON("user", data);
       if (data.token) {
-        localStorage.setItem("token", data.token);
+        local.set("token", data.token);
       }
     }
 
