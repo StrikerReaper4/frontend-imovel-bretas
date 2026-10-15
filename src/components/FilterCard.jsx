@@ -8,22 +8,36 @@ const CURRENCY_SYMBOL = {
   Portugal: "€",
 };
 
-function FilterCard({ admin, onFilter }) {
+const EMPTY_FILTER = {
+  id_imovel: "",
+  tipo: "",
+  bairro: "",
+  cidade: "",
+  estado: "",
+  pais: "",
+  quartos: 0,
+  banheiros: 0,
+  vagas: 0,
+  de: 0,
+  ate: 0,
+};
+
+// externalPais: país escolhido fora do card (bandeiras do Header). Quando muda,
+// o card é reiniciado com esse país para refletir o que está sendo exibido.
+function FilterCard({ admin, onFilter, externalPais }) {
   const [estados, setEstados] = useState([]);
   const [cidades, setCidades] = useState(["Qualquer"]);
-  const [filter, setFilter] = useState({
-    id_imovel: "",
-    tipo: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    pais: "",
-    quartos: 0,
-    banheiros: 0,
-    vagas: 0,
-    de: 0,
-    ate: 0,
-  });
+  const [filter, setFilter] = useState(() => ({
+    ...EMPTY_FILTER,
+    pais: externalPais || "",
+  }));
+
+  useEffect(() => {
+    if (externalPais === undefined) return;
+    setFilter((prev) =>
+      prev.pais === externalPais ? prev : { ...EMPTY_FILTER, pais: externalPais }
+    );
+  }, [externalPais]);
 
   if (admin === undefined) admin = false;
 

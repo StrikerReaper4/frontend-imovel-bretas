@@ -4,6 +4,7 @@ import AboutUs from "./pages/AboutUs";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import PropertySelected from "./pages/PropertySelected";
+import { ForgotPasswordPage, ResetPasswordPage } from "./pages/PasswordPages";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 //import GoogleTranslate from "./components/GoogleTranslate";
@@ -18,7 +19,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/property/:id" element={<PropertySelected />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/admin" element={<LoginPage />} />
+          <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
+          <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
           <Route path="/admin/logged" element={<AdminPage />} />
           {/* Qualquer rota desconhecida cai no 404 em vez de tela branca */}
           <Route path="*" element={<NotFound />} />

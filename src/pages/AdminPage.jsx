@@ -11,13 +11,13 @@ import {
   createImovel,
   updateImovel,
 } from "../services/imovelService";
-import { local } from "../utils/storage";
+import { isAdmin, logout } from "../utils/auth";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
-
-JSON.stringify();
+import { ChangePasswordForm, NewAdminForm } from "../components/AdminAccountForms";
+import { FaKey, FaUserPlus } from "react-icons/fa";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -44,17 +44,10 @@ function AdminPage() {
   };
 
   useEffect(() => {
-    try {
-      const token = local.get("token");
-      const expiry = Number(local.get("token_expiry"));
-
-      if (!token || !expiry || Date.now() > expiry) {
-        local.remove("token");
-        local.remove("token_expiry");
-        navigate("/admin");
-      }
-    } catch {
-      navigate("/admin");
+    if (!isAdmin()) {
+      logout();
+      navigate("/login", { replace: true });
+      return;
     }
 
     const fetchProperties = async () => {
@@ -208,7 +201,29 @@ function AdminPage() {
   if (properties.length === 0) return <Loading />;
   return (
     <>
-      <Header admin={true} />
+      <Header
+        admin={true}
+        adminActions={[
+          { label: "Novo admin", icon: <FaUserPlus />, onClick: () => openModal("newAdmin") },
+          { label: "Alterar senha", icon: <FaKey />, onClick: () => openModal("password") },
+        ]}
+      />
+
+      {modalType === "password" && (
+        <Modal
+          title="Alterar senha"
+          data={<ChangePasswordForm onDone={closeModal} />}
+          onClose={closeModal}
+        />
+      )}
+
+      {modalType === "newAdmin" && (
+        <Modal
+          title="Adicionar novo admin"
+          data={<NewAdminForm onDone={closeModal} />}
+          onClose={closeModal}
+        />
+      )}
 
       {modalType === "edit" && (
         <Modal
