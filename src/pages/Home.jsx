@@ -7,6 +7,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { FaArrowUp } from "react-icons/fa";
 import { listImoveis } from "../services/imovelService";
 import { session } from "../utils/storage";
+import { useSearchParams } from "react-router-dom";
 
 const PAGE_SIZE = 12;
 const SESSION_KEY = "bretas_home_state";
@@ -31,6 +32,11 @@ function Home() {
   const [loadError, setLoadError] = useState(false);
 
   const [activeFilter, setActiveFilter] = useState(null);
+
+  // País vindo das bandeiras do Header (?pais=Brasil)
+  const [searchParams] = useSearchParams();
+  const paisParam = searchParams.get("pais") || "";
+  const paisParamMounted = useRef(false);
 
   const sentinelRef = useRef(null);
   const prefetchCache = useRef({}); // { [pageNumber]: { items, total } }
@@ -100,7 +106,8 @@ function Home() {
     // A ordenação do backend é estável (ORDER BY id DESC), então os itens
     // voltam idênticos — sem precisar guardar nada pesado no storage.
     const restoredPage = saved?.page > 0 ? saved.page : 1;
-    const restoredFilter = saved?.activeFilter || null;
+    const restoredFilter =
+      saved?.activeFilter || (paisParam ? { pais: paisParam } : null);
 
     if (!saved) {
       session.remove(SESSION_KEY);
@@ -263,6 +270,18 @@ function Home() {
     }
   };
 
+  // ── Filtro por país pelas bandeiras do Header ─────────────────────────────
+  // O carregamento inicial já considera o ?pais=; aqui só reage a mudanças.
+  useEffect(() => {
+    if (!paisParamMounted.current) {
+      paisParamMounted.current = true;
+      return;
+    }
+    recieveFilterProperties(paisParam ? { pais: paisParam } : null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paisParam]);
+
   // ── Botão "Voltar ao topo" ────────────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => setShowExtra(window.scrollY > 500);
@@ -296,7 +315,11 @@ function Home() {
       <div className="bg-[#F3F3F3] grid grid-cols-[400px_3fr] max-[870px]:grid-cols-1 p-4 pb-28">
         {/* FilterCard SEMPRE visível — nunca desmontado */}
         <div className="sticky top-4 self-start max-[870px]:static max-[710px]:mb-8">
-          <FilterCard admin={false} onFilter={recieveFilterProperties} />
+          <FilterCard
+            admin={false}
+            onFilter={recieveFilterProperties}
+            externalPais={paisParam}
+          />
         </div>
 
         <div className="space-y-1 items-center justify-center text-center">
