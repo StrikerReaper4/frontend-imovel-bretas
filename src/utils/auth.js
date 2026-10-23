@@ -4,7 +4,9 @@ import { local } from "./storage";
 export function isLoggedIn() {
   const token = local.get("token");
   const expiry = Number(local.get("token_expiry"));
-  return Boolean(token && expiry && Date.now() < expiry);
+  // "[object Object]" = token salvo errado por uma versão anterior do front
+  if (!token || token.startsWith("[object")) return false;
+  return Boolean(expiry && Date.now() < expiry);
 }
 
 export function isAdmin() {
@@ -12,7 +14,7 @@ export function isAdmin() {
   const user = local.getJSON("user");
   // Usuários antigos podem não ter `role` salvo — nesse caso trata como admin,
   // já que hoje só o admin tem login.
-  return !user?.role || user.role === "admin";
+  return !user?.role || String(user.role).trim().toLowerCase() === "admin";
 }
 
 export function logout() {

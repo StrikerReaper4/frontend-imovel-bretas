@@ -11,9 +11,11 @@ export const Login = async (login) => {
     const data = response.data;
     // A API responde { user, token } — versões antigas usavam `pessoa`.
     const user = data.user || data.pessoa || null;
+    // O backend manda { token: { token: "..." } } — aceita os dois formatos.
+    const token = typeof data.token === "string" ? data.token : data.token?.token;
 
-    if (data.token) {
-      local.set("token", data.token);
+    if (token) {
+      local.set("token", token);
       local.set("token_expiry", String(Date.now() + SESSION_MS));
     }
     if (user) {
