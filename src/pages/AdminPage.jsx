@@ -22,6 +22,9 @@ import { FaKey, FaUserPlus } from "react-icons/fa";
 function AdminPage() {
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
+  // Só o carregamento inicial mostra a tela de Loading; um filtro sem
+  // resultados mostra a mensagem de "nenhum imóvel" no lugar dos cards.
+  const [isLoading, setIsLoading] = useState(true);
   const [modalType, setModalType] = useState(null);
   const [propertyId, setPropertyId] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -84,6 +87,8 @@ function AdminPage() {
         setProperties(normalized);
       } catch (err) {
         console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchProperties();
@@ -198,7 +203,7 @@ function AdminPage() {
     setSelectedProperty(null);
   }, []);
 
-  if (properties.length === 0) return <Loading />;
+  if (isLoading) return <Loading />;
   return (
     <>
       <Header
@@ -271,6 +276,14 @@ function AdminPage() {
 
         <div className="space-y-1 items-center justify-center text-center">
           <h2 className="text-3xl mb-4 title">Destaques</h2>
+          {properties.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-64 text-center">
+              <h2 className="text-xl font-semibold text-gray-600 mb-2">
+                Nenhum imóvel encontrado
+              </h2>
+              <p className="text-gray-500">Tente ajustar os filtros ao lado.</p>
+            </div>
+          )}
           <div className="flex flex-wrap gap-8 justify-center items-center">
             {properties.map((property, index) => (
               <CardProperty
