@@ -57,9 +57,11 @@ export const listImoveis = async (filtro = null, page = 1, limit = 12) => {
 };
 
 // page começa em 1, limit define quantos imóveis por vez
+// Usado pelo painel do admin: só a capa de cada imóvel (thumb), como na Home.
+// Baixar todas as fotos de 200 imóveis só para montar a lista era o gargalo.
 export const getImoveis = async (page = 1, limit = 20) => {
   try {
-    const response = await api.post("/filtrar/imoveis", { page, limit });
+    const response = await api.post("/filtrar/imoveis", { page, limit, thumb: true });
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];
@@ -71,9 +73,10 @@ export const getImoveis = async (page = 1, limit = 20) => {
 };
 
 // filtro + paginação — o backend cuida do LIMIT/OFFSET
-export const filterImoveis = async (filtro, page = 1, limit = 20) => {
+// thumb = true → só a capa. A página de detalhe chama sem thumb (todas as fotos).
+export const filterImoveis = async (filtro, page = 1, limit = 20, thumb = false) => {
   try {
-    const response = await api.post("/filtrar/imoveis", { ...filtro, page, limit });
+    const response = await api.post("/filtrar/imoveis", { ...filtro, page, limit, thumb });
     const data = response?.data;
     if (Array.isArray(data)) return data;
     if (data && typeof data === "object") return [data];

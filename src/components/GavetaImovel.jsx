@@ -9,6 +9,7 @@ import {
   simboloMoeda,
   valorPorExtenso,
 } from "../utils/formato";
+import { otimizarFotos, TIPOS_ACEITOS } from "../utils/imagem";
 
 /**
  * Cadastro de imóvel em três etapas, dentro da gaveta lateral.
@@ -53,6 +54,9 @@ export default function GavetaImovel({
   const [etapa, setEtapa] = useState(0);
   const [estados, setEstados] = useState(["Qualquer"]);
   const [cidades, setCidades] = useState(["Qualquer"]);
+  const [otimizando, setOtimizando] = useState(false);
+  const [erroFoto, setErroFoto] = useState("");
+  const editando = Boolean(inicial);
 
   const aplicar = (campos) => setImovel((atual) => ({ ...atual, ...campos }));
 
@@ -107,7 +111,27 @@ export default function GavetaImovel({
     };
   }, [imovel.estado]);
 
-  const fotos = Array.isArray(imovel.imagem) ? imovel.imagem.length : 0;
+  // Conta só as fotos escolhidas agora — na edição, `imagem` vem com a capa
+  // já salva (base64), que não é uma foto nova.
+  const fotos = Array.isArray(imovel.imagem)
+    ? imovel.imagem.filter((f) => f instanceof File).length
+    : 0;
+
+  const escolherFotos = async (e) => {
+    const arquivos = Array.from(e.target.files || []);
+    if (arquivos.length === 0) return;
+    setErroFoto("");
+    setOtimizando(true);
+    try {
+      set("imagem", await otimizarFotos(arquivos));
+    } catch (err) {
+      e.target.value = "";
+      set("imagem", []);
+      setErroFoto(err.message);
+    } finally {
+      setOtimizando(false);
+    }
+  };
   const ultima = etapa === ETAPAS.length - 1;
 
   const resumo = [
@@ -133,7 +157,8 @@ export default function GavetaImovel({
         )}
         {ultima ? (
           <Button
-            label={rotulo}
+            label={otimizando ? "Otimizando fotos…" : rotulo}
+            disabled={otimizando}
             className="flex-1 min-[760px]:flex-none"
             onClick={() => onSubmit(imovel)}
           />
@@ -382,16 +407,28 @@ export default function GavetaImovel({
               type="file"
               wid="full"
               multiple
+              accept={TIPOS_ACEITOS}
               className="file:mr-3 file:cursor-pointer file:border-0 file:bg-navy file:px-4 file:py-2 file:text-white file:transition-colors file:hover:bg-navy-dark"
-              setValue={(e) => set("imagem", Array.from(e.target.files))}
+              setValue={escolherFotos}
             />
             <p className="m-0 mt-2 text-[13.5px] text-muted">
-              {fotos > 0
+              {otimizando
+                ? "Otimizando as fotos…"
+                : fotos > 0
                 ? `${fotos} ${
                     fotos === 1 ? "foto escolhida" : "fotos escolhidas"
-                  }. A primeira vira a capa.`
+                  }. A primeira vira a capa.${
+                    editando ? " Elas substituem as fotos atuais." : ""
+                  }`
+                : editando
+                ? "Sem novas fotos, as atuais continuam. Escolher fotos substitui todas."
                 : "A primeira foto vira a capa no catálogo."}
             </p>
+            {erroFoto && (
+              <p role="alert" className="m-0 mt-2 text-[13.5px] text-red-800">
+                {erroFoto}
+              </p>
+            )}
           </div>
         </div>
       )}

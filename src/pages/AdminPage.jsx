@@ -124,7 +124,8 @@ function AdminPage() {
           id_imovel: Number(limpo.id_imovel) || 0,
         },
         1,
-        200
+        200,
+        true
       );
       setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
     } catch (err) {
@@ -189,7 +190,9 @@ function AdminPage() {
     // indisponível, sumindo do catálogo.
     disponivel: p.disponivel === false ? "false" : "true",
     descricao: String(p.descricao || ""),
-    imagem: p.imagem || [],
+    // Só fotos NOVAS (File) vão no envio. As que já estão salvas chegam como
+    // base64 e não precisam voltar — sem fotos novas o backend mantém as atuais.
+    imagem: (p.imagem || []).filter((f) => f instanceof File),
     ...(p.id_pessoa ? { id_pessoa: p.id_pessoa } : {}),
   });
 
@@ -199,9 +202,16 @@ function AdminPage() {
     const corpo = paraEnvio(selectedProperty, id);
     try {
       await updateImovel(corpo);
-      setProperties((prev) =>
-        prev.map((p) => (p.ind === id ? { ...p, ...corpo, ind: id } : p))
-      );
+      const { imagem, ...campos } = corpo;
+      if (imagem.length > 0) {
+        // Fotos trocadas: busca de novo para o card mostrar a capa nova.
+        const data = await getImoveis(1, 200);
+        setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
+      } else {
+        setProperties((prev) =>
+          prev.map((p) => (p.ind === id ? { ...p, ...campos, ind: id } : p))
+        );
+      }
       fecharModal();
       mostrar("ok", `Imóvel ${id} atualizado.`);
     } catch (err) {
