@@ -6,6 +6,7 @@ import {
   FaArrowLeft,
   FaBath,
   FaCarAlt,
+  FaEnvelope,
   FaExpand,
   FaRulerCombined,
   FaTimes,
@@ -17,12 +18,16 @@ import Footer from "../components/Footer";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import Revelar, { TituloLinhas } from "../components/Revelar";
-import { BANDEIRA, formatPrice } from "../utils/imovel";
+import {
+  BANDEIRA,
+  formatPrice,
+  abrirWhatsappImovel,
+  abrirEmailImovel,
+} from "../utils/imovel";
 import { filterImoveis } from "../services/imovelService";
 import { session } from "../utils/storage";
 import { useParallax } from "../utils/motion";
 
-const TELEFONE = "5567992609967";
 
 function PropertySelected() {
   const location = useLocation();
@@ -113,19 +118,14 @@ function PropertySelected() {
   const local = [property.bairro, property.cidade, property.estado]
     .filter(Boolean)
     .join(" · ");
-  const enderecoCompleto = `${property.rua}, ${property.bairro} ${property.cidade} ${property.estado}`;
+  const enderecoCompleto = [property.rua, property.numero, property.bairro, property.cidade, property.estado, property.pais]
+    .filter((p) => p && p !== "0")
+    .join(", ");
 
   const trocar = (dir) =>
     setFoto((i) => (i + dir + imagens.length) % imagens.length);
 
-  const abrirWhatsapp = () => {
-    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${enderecoCompleto} e do ID ${property.ind}`;
-    window.open(
-      `https://wa.me/${TELEFONE}?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener noreferrer"
-    );
-  };
+  const abrirWhatsapp = () => abrirWhatsappImovel(property);
 
   const fichas = [
     { label: "Quartos", valor: property.quartos, icon: <IoIosBed size={19} /> },
@@ -462,6 +462,13 @@ function PropertySelected() {
                 wid="full"
                 icon={<FaWhatsapp size={18} />}
                 onClick={abrirWhatsapp}
+              />
+              <Button
+                label="Enviar e-mail"
+                variant="ghost"
+                wid="full"
+                icon={<FaEnvelope size={16} />}
+                onClick={() => abrirEmailImovel(property)}
               />
               <Button
                 label="Ver outros imóveis"

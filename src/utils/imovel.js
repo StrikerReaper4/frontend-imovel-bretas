@@ -35,3 +35,48 @@ export function resolveImage(property) {
 
   return "/placeholder_house.jpg";
 }
+
+// ── Contato sobre um imóvel ──────────────────────────────────────────────────
+// Uma mensagem só para WhatsApp e e-mail, com código, link e (quando o imóvel
+// veio do parceiro) a referência dele — para a corretora achar o anúncio na hora.
+export const TELEFONE_WHATSAPP = "5567992609967";
+export const EMAIL_CONTATO = "imoveisbretas@gmail.com";
+
+export function linkImovel(property) {
+  return `${window.location.origin}/property/${property?.ind}`;
+}
+
+export function mensagemImovel(property) {
+  const onde = [property?.rua, property?.bairro, property?.cidade, property?.pais]
+    .filter(Boolean)
+    .join(", ");
+  const refParceiro = String(property?.descricao || "").match(/Ref\. parceiro: (\S+)/)?.[1];
+  const linhas = [
+    "Olá! Tenho interesse neste imóvel:",
+    "",
+    `Código: ${property?.ind}${refParceiro ? ` (ref. ${refParceiro})` : ""}`,
+    `${property?.tipo || "Imóvel"}${onde ? ` em ${onde}` : ""}`,
+    `Valor: ${formatPrice(property?.valor, property?.pais)}`,
+    `Link: ${linkImovel(property)}`,
+  ];
+  return linhas.join("\n");
+}
+
+export function abrirWhatsappImovel(property) {
+  window.open(
+    `https://wa.me/${TELEFONE_WHATSAPP}?text=${encodeURIComponent(mensagemImovel(property))}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
+// Abre o Gmail já com assunto e corpo preenchidos (mesmo padrão do topo do site).
+export function abrirEmailImovel(property) {
+  const assunto = `Interesse no imóvel código ${property?.ind}`;
+  window.open(
+    `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL_CONTATO}` +
+      `&su=${encodeURIComponent(assunto)}&body=${encodeURIComponent(mensagemImovel(property))}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+}

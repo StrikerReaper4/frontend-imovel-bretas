@@ -2,7 +2,7 @@ import { FaBath, FaCarAlt, FaWhatsapp, FaPen, FaTrash } from "react-icons/fa";
 import { IoIosBed } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
-import { BANDEIRA, formatPrice, resolveImage } from "../utils/imovel";
+import { BANDEIRA, formatPrice, resolveImage, abrirWhatsappImovel } from "../utils/imovel";
 import { useRevelar, useParallax } from "../utils/motion";
 
 /**
@@ -25,17 +25,14 @@ export default function CardProperty({
 
   const local = [property?.bairro, property?.cidade].filter(Boolean).join(", ");
   const endereco = property?.rua || "Endereço sob consulta";
-  const enderecoCompleto = `${property?.rua}, ${property?.bairro} ${property?.cidade} ${property?.estado}`;
+  const enderecoCompleto = [property?.rua, property?.bairro, property?.cidade, property?.estado, property?.pais]
+    .filter(Boolean)
+    .join(", ");
   const bandeira = BANDEIRA[property?.pais];
 
   const abrirWhatsapp = (e) => {
     e.stopPropagation();
-    const message = `Olá, gostaria de saber mais sobre o imóvel do endereço ${enderecoCompleto} e do ID ${property?.ind}`;
-    window.open(
-      `https://wa.me/5567992609967?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener noreferrer"
-    );
+    abrirWhatsappImovel(property);
   };
 
   const verDetalhes = () => navigate(`/property/${property?.ind}`);

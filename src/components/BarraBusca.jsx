@@ -226,12 +226,12 @@ export default function BarraBusca({ externalPais, onFilter, total }) {
           >
             <div className="grid grid-cols-[1.5fr_1fr_1fr_.9fr_auto] items-stretch max-[1020px]:grid-cols-2 max-[700px]:grid-cols-1">
               <label className={CAMPO}>
-                <span className={ROTULO}>Bairro</span>
+                <span className={ROTULO}>Bairro ou cidade</span>
                 <input
                   type="text"
                   value={filtro.bairro}
                   onChange={(e) => set("bairro", e.target.value)}
-                  placeholder="Ex.: Jardim dos Estados"
+                  placeholder="Ex.: Jardim dos Estados, Lisboa, Orlando"
                   className={VALOR}
                 />
               </label>
@@ -420,7 +420,7 @@ export default function BarraBusca({ externalPais, onFilter, total }) {
               )}
 
               <Input
-                label="Bairro"
+                label="Bairro ou cidade"
                 type="text"
                 placeholder="Carandá Bosque"
                 value={filtro.bairro}
