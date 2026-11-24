@@ -55,8 +55,10 @@ export default function Header({ admin, adminActions }) {
     navigate(activePais === pais ? "/" : `/?pais=${encodeURIComponent(pais)}`);
   };
 
-  const Bandeiras = ({ size = 34 }) => (
-    <div className="flex items-center gap-2">
+  // Sem `size`, o tamanho acompanha a largura da tela (topo do site): as
+  // bandeiras ficam sempre visíveis, só encolhem em telas menores.
+  const Bandeiras = ({ size }) => (
+    <div className="flex items-center gap-2 max-[480px]:gap-1.5">
       {FLAGS.map((f) => {
         const ativa = activePais === f.pais;
         return (
@@ -66,14 +68,18 @@ export default function Header({ admin, adminActions }) {
             aria-pressed={ativa}
             title={`Ver imóveis em ${f.pais}`}
             onClick={() => filtrarPorPais(f.pais)}
-            className={`rounded-full transition-[transform,box-shadow,opacity] duration-200 hover:scale-110 cursor-pointer
+            className={`shrink-0 rounded-full transition-[transform,box-shadow,opacity] duration-200 hover:scale-110 cursor-pointer
               ${ativa ? "ring-2 ring-gold ring-offset-2 ring-offset-navy" : activePais ? "opacity-55" : ""}`}
           >
             <img
               src={f.src}
               alt={`Imóveis em ${f.pais}`}
-              style={{ width: size, height: size }}
-              className="rounded-full object-cover"
+              style={size ? { width: size, height: size } : undefined}
+              className={`shrink-0 rounded-full object-cover ${
+                size
+                  ? ""
+                  : "h-[34px] w-[34px] max-[1080px]:h-[30px] max-[1080px]:w-[30px] max-[480px]:h-[26px] max-[480px]:w-[26px] max-[360px]:h-[22px] max-[360px]:w-[22px]"
+              }`}
             />
           </button>
         );
@@ -152,7 +158,7 @@ export default function Header({ admin, adminActions }) {
       >
         <img
           src="/logo-nobg.png"
-          className={`w-auto cursor-pointer transition-[height] duration-500 ease-[var(--ease-saida)] max-[480px]:h-[42px] ${rolou ? "h-[46px]" : "h-[56px]"}`}
+          className={`w-auto cursor-pointer transition-[height] duration-500 ease-[var(--ease-saida)] max-[480px]:h-[42px] max-[360px]:h-[34px] ${rolou ? "h-[46px]" : "h-[56px]"}`}
           alt="Bretas Imóveis — ir para a página inicial"
           onClick={() => navigate("/")}
         />
@@ -180,10 +186,8 @@ export default function Header({ admin, adminActions }) {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
-          <div className="max-[1080px]:hidden">
-            <Bandeiras />
-          </div>
+        <div className="ml-auto flex items-center gap-3 max-[480px]:gap-2">
+          <Bandeiras />
 
           <div className="flex items-center gap-2 max-[860px]:hidden">
             {CONTATOS.map((c) => (

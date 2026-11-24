@@ -404,7 +404,8 @@ function Home() {
             <h2 className="display m-0 text-[clamp(28px,3.6vw,52px)] text-ink">
               Seleção da semana
             </h2>
-            <p className="m-0 shrink-0 text-[14.5px] tabular-nums text-muted">
+            <p className="m-0 shrink-0 text-[14.5px] tabular-nums text-muted max-[700px]:shrink">
+
               {mostrarEsqueletos
                 ? "Carregando imóveis…"
                 : typeof total === "number" && total > 0
