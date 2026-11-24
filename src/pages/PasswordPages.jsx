@@ -67,7 +67,7 @@ export function ForgotPasswordPage() {
             Informe o email da sua conta de admin.
           </p>
           <Input type="email" label="Email" wid="full" value={email}
-            setValue={setEmail} placeholder="Digite seu email" className="mt-2" />
+            setValue={setEmail} placeholder="voce@bretasimoveis.cloud" className="mt-2" />
           {erro && <p className="text-red-600 text-sm mt-2">{erro}</p>}
           <Button label={enviando ? "Enviando..." : "Enviar link"} wid="full"
             className="p-2 mt-3" disabled={enviando} onClick={enviar} />
@@ -126,6 +126,7 @@ export function ResetPasswordPage() {
           <Input type="password" label="Nova senha" wid="full" value={nova}
             setValue={setNova} placeholder={`Mínimo ${SENHA_MINIMA} caracteres`} className="mt-2" />
           <Input type="password" label="Confirmar nova senha" wid="full" value={confirma}
+            placeholder="Repita a nova senha"
             setValue={setConfirma} className="mt-2" />
           {erro && <p className="text-red-600 text-sm mt-2">{erro}</p>}
           <Button label={enviando ? "Salvando..." : "Salvar nova senha"} wid="full"

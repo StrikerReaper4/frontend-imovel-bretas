@@ -86,8 +86,11 @@ export const filterImoveis = async (filtro, page = 1, limit = 20) => {
 
 export const createImovel = async (imovel) => {
   try {
+    // O login grava o usuário direto ({ id, nome, ... }); versões antigas
+    // gravavam embrulhado ({ user: {...} }). Sem aceitar as duas formas o
+    // id_pessoa ia zerado e o banco recusava o insert (violação de FK).
     const saved = local.getJSON("user");
-    const user = saved?.user;
+    const user = saved?.user || saved;
     if (user?.id) {
       imovel.id_pessoa = user.id;
     }

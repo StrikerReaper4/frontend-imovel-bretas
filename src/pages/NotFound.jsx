@@ -7,8 +7,8 @@ function NotFound() {
   return (
     <>
       <Header />
-      <div className="bg-[#F3F3F3] flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <h1 className="text-6xl font-extrabold text-[#0f3e58] mb-2">404</h1>
+      <div className="bg-canvas flex flex-col items-center justify-center min-h-[60vh] text-center px-4 py-16">
+        <h1 className="text-6xl font-extrabold text-navy mb-2">404</h1>
         <h2 className="text-2xl font-semibold text-gray-700 mb-3">
           Página não encontrada
         </h2>
@@ -17,7 +17,7 @@ function NotFound() {
         </p>
         <Link
           to="/"
-          className="bg-[#80703c] text-white py-2 px-6 rounded-full font-bold shadow-md hover:bg-[#6b5e33] transition"
+          className="bg-navy text-white py-3 px-6 rounded-full font-semibold hover:bg-navy-dark transition-colors"
         >
           Ver imóveis disponíveis
         </Link>

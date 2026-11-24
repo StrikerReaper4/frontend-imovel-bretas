@@ -31,7 +31,7 @@ class ErrorBoundary extends Component {
     if (!this.state.hasError) return this.props.children;
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#F3F3F3] text-center px-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-canvas text-center px-4">
         <h1 className="text-3xl font-bold text-[#0f3e58] mb-3">
           Algo deu errado
         </h1>
@@ -41,7 +41,7 @@ class ErrorBoundary extends Component {
         </p>
         <button
           onClick={this.handleReload}
-          className="bg-[#80703c] text-white py-2 px-6 rounded-full font-bold shadow-md hover:bg-[#6b5e33] transition"
+          className="bg-navy text-white py-3 px-6 rounded-full font-semibold hover:bg-navy-dark transition-colors"
         >
           Voltar ao início
         </button>

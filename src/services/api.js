@@ -1,8 +1,10 @@
 import axios from "axios";
 import { local } from "../utils/storage";
 
+// Em desenvolvimento, aponte VITE_API_URL para a API local (ver .env.example).
+// Sem a variavel definida, usa a API de producao.
 const api = axios.create({
-  baseURL: "https://api.bretasimoveis.cloud",
+  baseURL: import.meta.env.VITE_API_URL || "https://api.bretasimoveis.cloud",
 });
 
 // Envia o token do admin em todas as requisições — criar/editar/deletar imóvel

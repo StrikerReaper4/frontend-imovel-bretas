@@ -11,3 +11,6 @@ createRoot(document.getElementById('root')).render(
     {/*</ThemeProvider>*/}
   </StrictMode>,
 )
+
+// A Home restaura a própria posição; o navegador não deve competir com ela.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";

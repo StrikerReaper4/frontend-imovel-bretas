@@ -1,34 +1,22 @@
-// Card cinza animado — aparece no lugar dos imóveis enquanto carrega
+// Espelha a ficha do imóvel para o layout não pular ao carregar.
 export default function SkeletonCard() {
   return (
-    <div className="bg-white min-h-[400px] rounded-xl p-4 shadow-md text-left w-[360px] mb-4 animate-pulse">
-      {/* Imagem */}
-      <div className="w-full h-[170px] bg-gray-200 rounded-lg mb-3" />
-
-      {/* Tipo */}
-      <div className="h-3 bg-gray-200 rounded w-1/4 mb-2" />
-
-      {/* Endereço */}
-      <div className="flex items-center gap-2 mb-1">
-        <div className="h-6 w-6 bg-gray-200 rounded-full flex-shrink-0" />
-        <div className="h-5 bg-gray-200 rounded w-4/5" />
+    <div className="flex animate-pulse flex-col border-t border-line-strong">
+      <div className="aspect-[4/3] w-full bg-line/70" />
+      <div className="flex flex-col gap-3 pt-4">
+        <div className="h-7 w-2/5 bg-line/70" />
+        <div className="h-4 w-4/5 bg-line/70" />
+        <div className="h-3.5 w-3/5 bg-line/70" />
+        <div className="mt-2 flex gap-4">
+          <div className="h-4 w-9 bg-line/70" />
+          <div className="h-4 w-9 bg-line/70" />
+          <div className="h-4 w-9 bg-line/70" />
+        </div>
+        <div className="mt-2 flex items-center justify-between">
+          <div className="h-4 w-28 bg-line/70" />
+          <div className="h-10 w-10 bg-line/70" />
+        </div>
       </div>
-
-      {/* Quartos / Banheiros / Vagas */}
-      <div className="flex justify-between mt-3 mb-3">
-        <div className="h-4 bg-gray-200 rounded w-[30%]" />
-        <div className="h-4 bg-gray-200 rounded w-[30%]" />
-        <div className="h-4 bg-gray-200 rounded w-[30%]" />
-      </div>
-
-      {/* Preço */}
-      <div className="h-6 bg-gray-200 rounded w-2/5 mb-4" />
-
-      {/* Botão Ver Detalhes */}
-      <div className="h-10 bg-gray-200 rounded-lg w-full mb-2" />
-
-      {/* Botão Entrar em Contato */}
-      <div className="h-10 bg-gray-200 rounded-lg w-full" />
     </div>
   );
 }

@@ -1,14 +1,14 @@
-// CardOption.jsx
-
 function CardOption({ title, icon, description }) {
   return (
-    <>
-      <div className="flex flex-col items-center justify-center p-6 bg-white shadow-md rounded-lg w-64 h-56 hover:shadow-lg transition">
-        <div className="text-4xl mb-4">{icon}</div>
-        <h2 className="text-lg font-bold text-yellow-700 mb-2">{title}</h2>
-        <p className="text-center text-gray-600 text-sm">{description}</p>
+    <div className="group flex h-full flex-col bg-canvas p-7 transition-colors duration-300 hover:bg-surface max-[700px]:p-5">
+      <div className="mb-5 grid h-11 w-11 place-items-center rounded-[2px] border border-gold/60 text-[19px] text-gold-ink transition-colors duration-300 group-hover:bg-navy group-hover:text-gold">
+        {icon}
       </div>
-    </>
+      <h3 className="display-med m-0 mb-2 text-[20px] text-ink">{title}</h3>
+      <p className="m-0 text-[14.5px] leading-relaxed text-muted">
+        {description}
+      </p>
+    </div>
   );
 }
 

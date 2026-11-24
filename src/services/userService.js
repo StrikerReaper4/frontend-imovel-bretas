@@ -12,8 +12,14 @@ export const Login = async (login) => {
     // A API responde { user, token } — versões antigas usavam `pessoa`.
     const user = data.user || data.pessoa || null;
 
-    if (data.token) {
-      local.set("token", data.token);
+    // O backend devolve o JWT dentro de um objeto ({ token: { token } }), e
+    // versões antigas devolviam a string direto. Sem este desembrulho o header
+    // vira "Bearer [object Object]" e toda rota protegida responde 401.
+    const token =
+      typeof data.token === "string" ? data.token : data.token?.token;
+
+    if (token) {
+      local.set("token", token);
       local.set("token_expiry", String(Date.now() + SESSION_MS));
     }
     if (user) {
