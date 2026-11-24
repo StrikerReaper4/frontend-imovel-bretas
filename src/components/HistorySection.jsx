@@ -1,4 +1,4 @@
-import nossaHistoria from "../assets/nossa-historia.png";
+import nossaHistoria from "../assets/nossa-historia.jpg";
 
 function HistorySection() {
   return (
