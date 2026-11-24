@@ -4,7 +4,7 @@ import { FaArrowLeft, FaLock } from "react-icons/fa";
 import Button from "../components/Button";
 import Revelar, { TituloLinhas } from "../components/Revelar";
 import { Login } from "../services/userService";
-import { isAdmin, isLoggedIn } from "../utils/auth";
+import { isAdmin, isLoggedIn, logout } from "../utils/auth";
 import { useParallax } from "../utils/motion";
 
 const CAMPO =
@@ -29,10 +29,9 @@ function LoginPage() {
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  // Já logado? Vai direto para onde a pessoa deve estar.
+  // Já logado como admin? Vai direto para o painel.
   useEffect(() => {
-    if (isLoggedIn())
-      navigate(isAdmin() ? "/admin/logged" : "/", { replace: true });
+    if (isAdmin()) navigate("/admin/logged", { replace: true });
   }, [navigate]);
 
   const efetuarLogin = async (e) => {
@@ -44,8 +43,13 @@ function LoginPage() {
     setEnviando(false);
 
     if (response?.status === 200 && isLoggedIn()) {
-      // O sistema detecta o perfil: admin vai para o painel, os demais para a Home.
-      navigate(isAdmin() ? "/admin/logged" : "/");
+      if (isAdmin()) {
+        navigate("/admin/logged");
+      } else {
+        // Só admins têm painel — avisa em vez de jogar para a Home sem explicação.
+        logout();
+        setErro("Esta conta não tem acesso de administrador.");
+      }
     } else {
       setErro("E-mail ou senha inválidos.");
     }
