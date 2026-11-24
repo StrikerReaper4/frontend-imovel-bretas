@@ -40,6 +40,8 @@ export default function CardProperty({
 
   const verDetalhes = () => navigate(`/property/${property?.ind}`);
 
+  const plural = (n, um, varios) => `${Number(n) || 0} ${Number(n) === 1 ? um : varios}`;
+
   const specs = (claro = false) => (
     <div
       className={`flex flex-wrap items-center gap-5 text-[14px] ${
@@ -48,15 +50,15 @@ export default function CardProperty({
     >
       <span className="inline-flex items-center gap-1.5">
         <IoIosBed size={17} className="text-gold" />
-        {property?.quartos} quartos
+        {plural(property?.quartos, "quarto", "quartos")}
       </span>
       <span className="inline-flex items-center gap-1.5">
         <FaBath size={14} className="text-gold" />
-        {property?.banheiros} banheiros
+        {plural(property?.banheiros, "banheiro", "banheiros")}
       </span>
       <span className="inline-flex items-center gap-1.5">
         <FaCarAlt size={15} className="text-gold" />
-        {property?.vagas} vagas
+        {plural(property?.vagas, "vaga", "vagas")}
       </span>
       {property?.area ? (
         <span className="tabular-nums">{property.area} m²</span>

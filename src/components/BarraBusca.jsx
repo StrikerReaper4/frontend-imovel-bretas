@@ -209,7 +209,9 @@ export default function BarraBusca({ externalPais, onFilter, total }) {
   return (
     <>
       <div
-        className={`sticky top-[72px] z-30 transition-[padding] duration-500 ease-[var(--ease-saida)] max-[700px]:top-[64px] ${
+        // Grudada no topo só no computador. No tablet/celular os campos
+        // empilham e a barra cobriria metade da tela por cima dos cards.
+        className={`sticky top-[72px] z-30 transition-[padding] duration-500 ease-[var(--ease-saida)] max-[1020px]:static ${
           ancorada ? "py-2" : "py-0"
         }`}
       >
