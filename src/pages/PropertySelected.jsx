@@ -42,6 +42,13 @@ function PropertySelected() {
 
   // Busca o imóvel direto pelo ID — devolve só 1 registro.
   useEffect(() => {
+    // A mesma página é reaproveitada ao ir de um imóvel para outro (voltar/
+    // avançar do navegador): zera o estado para não mostrar dados — ou um
+    // "não encontrado" — do imóvel anterior.
+    setProperty(null);
+    setNotFound(false);
+    setFoto(0);
+    setLightbox(false);
     const fetchById = async () => {
       try {
         const id = parseInt(propertyId);
@@ -70,6 +77,10 @@ function PropertySelected() {
   }, []);
 
   // Título da aba — ajuda no compartilhamento e na busca.
+  useEffect(() => {
+    if (notFound) document.title = "Imóvel não encontrado — Bretas Imóveis";
+  }, [notFound]);
+
   useEffect(() => {
     if (!property) return;
     document.title = `${property.tipo || "Imóvel"} em ${

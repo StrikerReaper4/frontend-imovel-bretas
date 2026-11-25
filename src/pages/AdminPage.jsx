@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaCheck,
@@ -22,13 +22,17 @@ import {
 import {
   createImovel,
   deleteImovel,
-  filterImoveis,
-  getImoveis,
+  listImoveis,
   updateImovel,
 } from "../services/imovelService";
 import { isAdmin, logout } from "../utils/auth";
 import { useRolou } from "../utils/motion";
 import { formatarCep } from "../utils/formato";
+
+// O painel carrega em páginas: com centenas de imóveis, trazer tudo de uma
+// vez (mesmo só as capas) deixava a tela lenta — e o limite antigo de 200
+// escondia o resto do catálogo.
+const POR_PAGINA = 60;
 
 const PAISES = ["Qualquer", "Brasil", "Estados Unidos", "Portugal"];
 const TIPOS = ["Qualquer", "Casa", "Apartamento", "Terreno"];
@@ -63,6 +67,11 @@ function AdminPage() {
   const ancorada = useRolou(140);
 
   const [properties, setProperties] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [pagina, setPagina] = useState(1);
+  const [filtroApi, setFiltroApi] = useState(null);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  const [totaisPais, setTotaisPais] = useState({ todos: 0, Brasil: 0, "Estados Unidos": 0, Portugal: 0 });
   const [carregando, setCarregando] = useState(true);
   const [erroCarga, setErroCarga] = useState(false);
   const [filtro, setFiltro] = useState(FILTRO_VAZIO);
@@ -85,27 +94,63 @@ function AdminPage() {
       return;
     }
 
-    let vivo = true;
-    (async () => {
-      try {
-        setCarregando(true);
-        setErroCarga(false);
-        const data = await getImoveis(1, 200);
-        if (!vivo) return;
-        setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
-      } catch (err) {
-        console.error("Erro ao carregar imóveis:", err);
-        if (vivo) setErroCarga(true);
-      } finally {
-        if (vivo) setCarregando(false);
-      }
-    })();
-
-    return () => {
-      vivo = false;
-    };
+    carregar(null);
+    atualizarTotais();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const normalizarLista = (items) => items.map((p) => ({ ...p, ind: Number(p.ind) }));
+
+  // Primeira página de um filtro (ou do catálogo todo, com filtro null).
+  const carregar = async (f) => {
+    try {
+      setCarregando(true);
+      setErroCarga(false);
+      const { items, total: t } = await listImoveis(f, 1, POR_PAGINA);
+      setProperties(normalizarLista(items));
+      setTotal(typeof t === "number" ? t : items.length);
+      setPagina(1);
+      setFiltroApi(f);
+    } catch (err) {
+      console.error("Erro ao carregar imóveis:", err);
+      setErroCarga(true);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const carregarMais = async () => {
+    if (carregandoMais) return;
+    setCarregandoMais(true);
+    try {
+      const { items } = await listImoveis(filtroApi, pagina + 1, POR_PAGINA);
+      setProperties((prev) => {
+        const vistos = new Set(prev.map((p) => p.ind));
+        return [...prev, ...normalizarLista(items).filter((p) => !vistos.has(p.ind))];
+      });
+      setPagina((n) => n + 1);
+    } catch (err) {
+      console.error("Erro ao carregar mais imóveis:", err);
+      mostrar("erro", "Não foi possível carregar mais imóveis.");
+    } finally {
+      setCarregandoMais(false);
+    }
+  };
+
+  // Contadores do topo: total real do banco (limit 1 + with_total), não só
+  // o que está carregado na tela.
+  const atualizarTotais = async () => {
+    try {
+      const [todos, br, us, pt] = await Promise.all(
+        [null, { pais: "Brasil" }, { pais: "Estados Unidos" }, { pais: "Portugal" }].map((f) =>
+          listImoveis(f, 1, 1).then((r) => r.total || 0)
+        )
+      );
+      setTotaisPais({ todos, Brasil: br, "Estados Unidos": us, Portugal: pt });
+    } catch (err) {
+      console.error("Erro ao contar imóveis:", err);
+    }
+  };
 
   // ── Filtro ────────────────────────────────────────────────────────────
   const aplicarFiltro = async (e) => {
@@ -115,39 +160,12 @@ function AdminPage() {
       if (limpo[k] === "Qualquer") limpo[k] = "";
     });
 
-    try {
-      setCarregando(true);
-      setErroCarga(false);
-      const data = await filterImoveis(
-        {
-          ...limpo,
-          id_imovel: Number(limpo.id_imovel) || 0,
-        },
-        1,
-        200,
-        true
-      );
-      setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
-    } catch (err) {
-      console.error("Erro ao filtrar imóveis:", err);
-      setErroCarga(true);
-    } finally {
-      setCarregando(false);
-    }
+    await carregar({ ...limpo, id_imovel: Number(limpo.id_imovel) || 0 });
   };
 
   const limparFiltro = async () => {
     setFiltro(FILTRO_VAZIO);
-    try {
-      setCarregando(true);
-      const data = await getImoveis(1, 200);
-      setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
-    } catch (err) {
-      console.error("Erro ao recarregar imóveis:", err);
-      setErroCarga(true);
-    } finally {
-      setCarregando(false);
-    }
+    await carregar(null);
   };
 
   // ── Ações sobre o imóvel ──────────────────────────────────────────────
@@ -155,6 +173,8 @@ function AdminPage() {
     try {
       await deleteImovel(propertyId);
       setProperties((prev) => prev.filter((p) => p.ind !== propertyId));
+      setTotal((t) => Math.max(0, t - 1));
+      atualizarTotais();
       fecharModal();
       mostrar("ok", `Imóvel ${propertyId} removido do catálogo.`);
     } catch (err) {
@@ -177,7 +197,9 @@ function AdminPage() {
     vagas: sanitizeNumber(p.vagas),
     andar: sanitizeNumber(p.andar),
     valor: sanitizeNumber(p.valor),
-    numero: sanitizeNumber(p.numero),
+    // Número do endereço é texto: "1221-A", "S/N" ou vazio (imóveis de
+    // parceiros). Converter para número transformava vazio em "0".
+    numero: String(p.numero ?? "").trim() === "0" ? "" : String(p.numero ?? "").trim(),
     // Guarda o CEP no mesmo formato do resto da base (00000-000) em vez de
     // oito dígitos soltos.
     cep:
@@ -205,8 +227,7 @@ function AdminPage() {
       const { imagem, ...campos } = corpo;
       if (imagem.length > 0) {
         // Fotos trocadas: busca de novo para o card mostrar a capa nova.
-        const data = await getImoveis(1, 200);
-        setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
+        await carregar(filtroApi);
       } else {
         setProperties((prev) =>
           prev.map((p) => (p.ind === id ? { ...p, ...campos, ind: id } : p))
@@ -225,8 +246,8 @@ function AdminPage() {
       await createImovel(paraEnvio(novo));
       fecharModal();
       mostrar("ok", "Imóvel publicado no catálogo.");
-      const data = await getImoveis(1, 200);
-      setProperties(data.map((p) => ({ ...p, ind: Number(p.ind) })));
+      await carregar(filtroApi);
+      atualizarTotais();
     } catch (err) {
       console.error("Erro ao adicionar imóvel:", err);
       mostrar("erro", "Não foi possível publicar o imóvel.");
@@ -251,15 +272,6 @@ function AdminPage() {
     setSelectedProperty(null);
   }, []);
 
-  // ── Resumo do catálogo, calculado sobre o que está carregado ──────────
-  const resumo = useMemo(() => {
-    // Só contagem: somar valores de países diferentes misturaria moedas.
-    const porPais = { Brasil: 0, "Estados Unidos": 0, Portugal: 0 };
-    properties.forEach((p) => {
-      if (porPais[p.pais] !== undefined) porPais[p.pais] += 1;
-    });
-    return { porPais };
-  }, [properties]);
 
   const filtroAtivo =
     Object.entries(filtro).filter(
@@ -322,13 +334,13 @@ function AdminPage() {
               className="mt-9 grid grid-cols-4 gap-px bg-white/15 max-[760px]:grid-cols-2"
             >
               {[
-                { label: "Imóveis carregados", valor: properties.length },
-                { label: "No Brasil", valor: resumo.porPais["Brasil"] },
+                { label: "Imóveis no catálogo", valor: totaisPais.todos },
+                { label: "No Brasil", valor: totaisPais["Brasil"] },
                 {
                   label: "Nos Estados Unidos",
-                  valor: resumo.porPais["Estados Unidos"],
+                  valor: totaisPais["Estados Unidos"],
                 },
-                { label: "Em Portugal", valor: resumo.porPais["Portugal"] },
+                { label: "Em Portugal", valor: totaisPais["Portugal"] },
               ].map((b) => (
                 <div key={b.label} className="bg-navy-dark px-5 py-5">
                   <p className="preco m-0 text-[34px] leading-none text-gold">
@@ -456,10 +468,8 @@ function AdminPage() {
                 <span className="ml-auto text-[14px] tabular-nums text-muted">
                   {carregando
                     ? "Carregando…"
-                    : `${properties.length} ${
-                        properties.length === 1
-                          ? "imóvel na lista"
-                          : "imóveis na lista"
+                    : `${properties.length} de ${total} ${
+                        total === 1 ? "imóvel" : "imóveis"
                       }`}
                 </span>
               </div>
@@ -534,6 +544,20 @@ function AdminPage() {
                   ordem={i % 4}
                 />
               ))}
+            </div>
+          )}
+
+          {!carregando && !erroCarga && properties.length < total && (
+            <div className="mt-14 flex flex-col items-center gap-3">
+              <p className="m-0 text-[14px] tabular-nums text-muted">
+                Mostrando {properties.length} de {total} imóveis
+              </p>
+              <Button
+                label={carregandoMais ? "Carregando…" : "Carregar mais"}
+                variant="ghost"
+                disabled={carregandoMais}
+                onClick={carregarMais}
+              />
             </div>
           )}
         </section>
