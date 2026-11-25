@@ -7,6 +7,7 @@ import {
   FaPlus,
   FaSearch,
   FaUserPlus,
+  FaUsersCog,
 } from "react-icons/fa";
 import Header from "../components/Header";
 import CardProperty from "../components/CardProperty";
@@ -18,6 +19,7 @@ import Revelar from "../components/Revelar";
 import {
   ChangePasswordForm,
   NewAdminForm,
+  AdminsList,
 } from "../components/AdminAccountForms";
 import {
   createImovel,
@@ -283,6 +285,11 @@ function AdminPage() {
       <Header
         admin={true}
         adminActions={[
+          {
+            label: "Administradores",
+            icon: <FaUsersCog />,
+            onClick: () => abrirModal("admins"),
+          },
           {
             label: "Novo admin",
             icon: <FaUserPlus />,
@@ -569,6 +576,16 @@ function AdminPage() {
           title="Alterar senha"
           largura="max-w-[520px]"
           data={<ChangePasswordForm onDone={fecharModal} />}
+          onClose={fecharModal}
+        />
+      )}
+
+      {modalType === "admins" && (
+        <Modal
+          title="Administradores"
+          description="Quem pode entrar no painel. Os imóveis de quem for excluído passam para a sua conta."
+          largura="max-w-[560px]"
+          data={<AdminsList />}
           onClose={fecharModal}
         />
       )}

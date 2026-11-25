@@ -45,3 +45,7 @@ export const esqueciSenha = (email) => api.post("/senha/esqueci", { email });
 
 export const redefinirSenha = (token, novaSenha) =>
   api.post("/senha/redefinir", { token, nova_senha: novaSenha });
+
+export const listarAdmins = () => api.post("/admin/listar", {});
+
+export const excluirAdmin = (id) => api.post("/admin/excluir", { id });

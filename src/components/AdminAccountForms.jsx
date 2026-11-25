@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
-import { alterarSenha, criarAdmin } from "../services/userService";
+import { alterarSenha, criarAdmin, excluirAdmin, listarAdmins } from "../services/userService";
 import { apiErrorMessage } from "../services/api";
 
 const SENHA_MINIMA = 8;
@@ -118,5 +118,120 @@ export function NewAdminForm({ onDone }) {
       <Button label={enviando ? "Criando..." : "Criar admin"} wid="full"
         className="mt-2" disabled={enviando} onClick={enviar} />
     </form>
+  );
+}
+
+// Lista de administradores com exclusão. As regras de segurança ficam no
+// backend (não excluir a si mesmo nem o último admin; os imóveis do excluído
+// passam para quem excluiu) — aqui só mostramos e pedimos confirmação.
+export function AdminsList() {
+  const [admins, setAdmins] = useState([]);
+  const [eu, setEu] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [confirmar, setConfirmar] = useState(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState("");
+
+  const carregar = async () => {
+    setCarregando(true);
+    try {
+      const { data } = await listarAdmins();
+      setAdmins(data.admins || []);
+      setEu(data.eu);
+    } catch (err) {
+      setErro(apiErrorMessage(err, "Não foi possível carregar os administradores."));
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  useEffect(() => {
+    carregar();
+  }, []);
+
+  const excluir = async () => {
+    if (!confirmar) return;
+    setErro("");
+    setSucesso("");
+    setExcluindo(true);
+    try {
+      const { data } = await excluirAdmin(confirmar.id);
+      const n = data.imoveis_transferidos || 0;
+      setSucesso(
+        `${confirmar.nome} foi excluído.` +
+          (n > 0 ? ` ${n} ${n === 1 ? "imóvel passou" : "imóveis passaram"} para a sua conta.` : "")
+      );
+      setConfirmar(null);
+      carregar();
+    } catch (err) {
+      setErro(apiErrorMessage(err, "Não foi possível excluir o administrador."));
+    } finally {
+      setExcluindo(false);
+    }
+  };
+
+  if (carregando) return <p className="m-0 text-[15px] text-muted">Carregando…</p>;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <ul className="m-0 flex list-none flex-col p-0">
+        {admins.map((a) => {
+          const souEu = a.id === eu;
+          return (
+            <li
+              key={a.id}
+              className="flex items-center justify-between gap-4 border-b border-line py-3.5 last:border-b-0"
+            >
+              <div className="min-w-0">
+                <p className="m-0 truncate text-[15.5px] font-semibold text-ink">
+                  {a.nome}
+                  {souEu && <span className="ml-2 text-[13px] font-normal text-gold-ink">(você)</span>}
+                </p>
+                <p className="m-0 truncate text-[14px] text-muted">{a.email}</p>
+              </div>
+              {!souEu && admins.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setErro("");
+                    setSucesso("");
+                    setConfirmar(a);
+                  }}
+                  className="shrink-0 cursor-pointer text-[14px] font-semibold text-red-800 underline-offset-4 hover:underline"
+                >
+                  Excluir
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {admins.length <= 1 && (
+        <p className="m-0 text-[14px] text-muted">
+          Você é o único administrador. Crie outro em “Novo admin” antes de poder excluir contas.
+        </p>
+      )}
+
+      {confirmar && (
+        <div className="border border-red-700/40 bg-red-700/5 p-4">
+          <p className="m-0 text-[15px] text-ink">
+            Excluir <b>{confirmar.nome}</b> ({confirmar.email})? Ele não vai mais conseguir
+            entrar no painel. Os imóveis cadastrados por ele passam para a sua conta.
+          </p>
+          <div className="mt-4 flex gap-3">
+            <Button
+              label={excluindo ? "Excluindo…" : `Excluir ${confirmar.nome}`}
+              disabled={excluindo}
+              onClick={excluir}
+            />
+            <Button label="Cancelar" variant="ghost" onClick={() => setConfirmar(null)} />
+          </div>
+        </div>
+      )}
+
+      <Feedback erro={erro} sucesso={sucesso} />
+    </div>
   );
 }
